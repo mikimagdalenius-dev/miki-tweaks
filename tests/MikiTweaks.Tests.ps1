@@ -28,6 +28,31 @@ Describe 'Script' {
     }
 }
 
+Describe 'Interfaz' {
+    # WPF solo construye las plantillas al dibujar un control: un error ahí no sale al cargar la ventana, sino al usarla
+    BeforeAll {
+        Add-Type -AssemblyName PresentationFramework, PresentationCore, WindowsBase
+        $l = Get-Content $script:Src -Encoding UTF8
+        $start = ($l | Select-String '^\s*<Window\b' | Select-Object -First 1).LineNumber - 1
+        $end = $start + ($l[$start..($start + 400)] | Select-String "^'@" | Select-Object -First 1).LineNumber - 1
+        $script:Win = [Windows.Markup.XamlReader]::Parse(($l[$start..($end - 1)] -join "`n"))
+        $script:Styles = @($script:Win.Resources.Keys | ForEach-Object { $script:Win.Resources[$_] } | Where-Object { $_ -is [Windows.Style] -and $_.TargetType -and -not $_.TargetType.IsAbstract })
+    }
+    AfterAll { if ($script:Win) { $script:Win.Close() } }
+
+    It 'la ventana principal tiene estilos' {
+        $script:Styles.Count | Should -BeGreaterThan 0
+    }
+    It 'todas las plantillas de estilo se construyen sin error' {
+        foreach ($s in $script:Styles) {
+            $c = [Activator]::CreateInstance($s.TargetType); $c.Style = $s
+            if ($c -is [Windows.Controls.Primitives.ScrollBar]) { $c.Orientation = 'Vertical'; $c.Maximum = 100; $c.ViewportSize = 20 }
+            $g = New-Object Windows.Controls.Grid; [void]$g.Children.Add($c)
+            { $g.Measure([Windows.Size]::new(300, 300)); $g.Arrange([Windows.Rect]::new(0, 0, 300, 300)); $g.UpdateLayout() } | Should -Not -Throw -Because "el estilo $($s.TargetType.Name) tiene que poder dibujarse"
+        }
+    }
+}
+
 Describe 'Canal de actualizaciones (version.json)' {
     # Si esto falla, las copias instaladas rechazarían la actualización o recibirían otra versión
     BeforeAll { $script:Manifest = Get-Content (Join-Path $PSScriptRoot '..\version.json') -Raw | ConvertFrom-Json }
