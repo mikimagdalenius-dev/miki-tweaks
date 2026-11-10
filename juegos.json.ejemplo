@@ -1,0 +1,12 @@
+[
+  {
+    "Id": "mijuego",
+    "Name": "Mi juego",
+    "Abbr": "MJ",
+    "Color": "#0EA5E9",
+    "Api": "dx11",
+    "Exes": [ "MiJuego-Win64-Shipping.exe" ],
+    "Rel": [ "Mi Juego\\Binaries\\Win64\\MiJuego-Win64-Shipping.exe" ],
+    "Tips": [ "Modo de pantalla: Pantalla completa", "Sincronización vertical desactivada" ]
+  }
+]

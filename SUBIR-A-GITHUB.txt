@@ -1,0 +1,45 @@
+CÓMO SUBIR MIKI TWEAKS A GITHUB (unos 15 minutos, gratis)
+=========================================================
+
+Todo lo de esta carpeta está listo para subir. Solo tienes que hacer los pasos
+que necesitan tu cuenta.
+
+1) CREAR LA CUENTA
+   - Entra en https://github.com y crea una cuenta (gratis). El nombre de usuario
+     saldrá en la dirección del proyecto: github.com/TU-USUARIO/miki-tweaks
+
+2) CREAR EL PROYECTO (repositorio)
+   - Arriba a la derecha: «+» → «New repository».
+   - Repository name: miki-tweaks
+   - Marca «Public». NO marques «Add a README» (ya lo tenemos).
+   - Pulsa «Create repository».
+
+3) SUBIR LOS ARCHIVOS
+   - En la página del repositorio vacío, pulsa «uploading an existing file».
+   - Arrastra TODO el contenido de esta carpeta «github» (README.md, LICENSE,
+     CHANGELOG.md, la carpeta docs y los archivos de la app).
+   - Abajo, pulsa «Commit changes».
+
+4) PUBLICAR LA DESCARGA (Release)
+   - En el repositorio: «Releases» (columna derecha) → «Create a new release».
+   - Tag: v8.2   ·   Título: Miki Tweaks 8.2
+   - Arrastra el archivo «Miki Tweaks.zip» de tu escritorio.
+   - Pulsa «Publish release». El enlace «Descargar la última versión» del README
+     ya funcionará.
+
+5) ACTIVAR LA WEB (GitHub Pages)
+   - Settings → Pages → «Build and deployment» → Source: «Deploy from a branch».
+   - Branch: main  ·  carpeta: /docs  → Save.
+   - En 1-2 minutos la web estará en: https://TU-USUARIO.github.io/miki-tweaks/
+
+6) DIME TU NOMBRE DE USUARIO DE GITHUB
+   Con eso, Claude deja configurado en la app:
+   - el botón «Web del proyecto» (Ajustes > Acerca de),
+   - el enlace de descarga de la web,
+   - y el canal de actualizaciones: todas las copias de la app avisarán y se
+     actualizarán solas cuando publiques una versión nueva.
+
+MÁS ADELANTE: FIRMA DIGITAL GRATUITA
+   Cuando el proyecto tenga algo de uso, se puede pedir firma digital gratis para
+   proyectos de código abierto en https://signpath.org (SignPath Foundation).
+   Quita el aviso azul de Windows al abrir la app. Claude te prepara la solicitud.

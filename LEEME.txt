@@ -1,0 +1,83 @@
+﻿MIKI TWEAKS
+==========
+
+Optimiza cualquier PC con Windows 10 u 11 para juegos competitivos
+(Fortnite, VALORANT, League of Legends, CS2, Apex, Rainbow Six, Overwatch 2,
+Rocket League, Marvel Rivals, Dota 2, PUBG).
+
+USARLA EN OTRO PC (desde un pen USB)
+1. Copia esta carpeta entera al pen.
+2. En el PC nuevo, abre el pen y haz doble clic en "Abrir Miki Tweaks.cmd".
+3. Acepta el aviso de administrador.
+4. La app se instala sola en ese PC y crea su acceso directo en el escritorio
+   y en el menú Inicio. A partir de ahí ya no necesitas el pen.
+5. Pulsa "Escanear mi PC": solo te propone lo que tiene sentido en ese equipo.
+
+QUÉ HACE
+- La primera vez te pregunta qué ordenador es (portátil o sobremesa), para qué lo
+  usas y qué prefieres (rendimiento, equilibrio o silencio). Con eso decide tus
+  modos (Juego, Creación, Trabajo/Diario, Ahorro de batería o Silencio) y qué
+  ajustes te recomienda. Se puede cambiar en Ajustes > Tu perfil.
+- Ajustes para cada juego que encuentre instalado, incluido su perfil en el panel
+  de control de NVIDIA (energía al máximo y baja latencia) y opciones de su propio
+  archivo de configuración (Fortnite, CS2, Apex, Rocket League, Rainbow Six).
+- Historial: cada tanda de cambios queda con fecha y se puede deshacer por separado.
+- Icono en la bandeja del sistema para cambiar de modo sin abrir la app.
+- Al activar el Modo Juego puede cerrar los programas que elijas (navegadores,
+  OneDrive, Spotify...).
+- Avisa si hay una versión nueva de la app y se actualiza sola (si configuras un canal).
+- Ajustes de Windows, red y programas de inicio.
+- Limpieza de Windows: apps preinstaladas, anuncios, telemetría y servicios
+  innecesarios. Nunca toca Xbox, Microsoft Store, Defender, Windows Update
+  ni Hyper-V / WSL / Docker.
+- Actualizaciones: comprueba en directo el último driver de la gráfica
+  y las actualizaciones de Windows.
+- Benchmark: mide FPS medios, 1 % y 0,1 % más bajos, latencia, tirones y
+  si te limita el procesador o la gráfica (PresentMon de Intel), y compara
+  antes y después de aplicar los ajustes.
+- Modos Juego / Trabajo / Ahorro de batería, con Modo Juego automático
+  al abrir un juego y cambio a Ahorro de batería al desenchufar.
+- Caché y temporales: mide y libera espacio (temporales, Windows Update,
+  volcados, shaders...).
+- Rendimiento en vivo: CPU, gráfica, temperatura, RAM, ping y temporizador,
+  más un test de latencia, jitter y pérdida a regiones de servidores.
+- Periféricos: marca y modelo de ratón, teclado, mandos y audio, su software
+  oficial y firmware, test de polling rate del ratón y ahorro de energía USB.
+- Salud del PC: BIOS, discos (SMART), batería, arranque y reparar Windows.
+- Aviso semanal de drivers y actualizaciones, e informe exportable del PC.
+- Ajustes: deshacer todo, punto de restauración y PERFILES:
+  en tu PC pulsa "Guardar perfil" y copia perfil.json a esta carpeta del pen;
+  en el PC nuevo, "Cargar perfil" marca los mismos ajustes para revisarlos.
+
+ATAJOS
+- F5: volver a escanear  ·  Ctrl+F: buscar  ·  Esc: cerrar avisos
+- Doble clic en la barra de título: maximizar
+
+SEGURIDAD
+- Antes de aplicar nada crea un punto de restauración.
+- Guarda el valor original de cada ajuste en ese PC: desactivar el interruptor
+  lo deja como estaba. Las apps quitadas se reinstalan desde la Microsoft Store.
+
+AÑADIR JUEGOS
+- Copia juegos.json.ejemplo como juegos.json (en esta carpeta) y añade tus juegos:
+  nombre, ejecutable (Exes) y ruta dentro de la biblioteca (Rel). La app los
+  detecta y les aplica prioridad, gráfica dedicada, benchmark y consejos.
+  Al abrirla desde el pen, juegos.json se copia también a la app instalada.
+
+RED Y PING (versión 7.8)
+- Red > Herramientas de conexión:
+  · Ping con la conexión ocupada (bufferbloat): mide tu ping en reposo y con
+    la conexión a tope, y te da una nota (A+ a F). Es la causa más común de los
+    picos de lag en casa. En fibra rápida usa hasta 1 GB de datos.
+  · ¿Dónde se pierde tu conexión?: sigue la ruta salto a salto hasta una región
+    de servidores y te dice si el problema está en tu casa, en tu operador o
+    más lejos (solo en ese último caso ayudaría una app tipo ExitLag).
+- Ajustes nuevos: prioridad de red para tus juegos (QoS, opcional) y Wi-Fi
+  estable para jugar (solo aparece si juegas por Wi-Fi).
+- Modos > Pausar descargas mientras juegas: Windows Update y OneDrive se pausan
+  con el Modo Juego y vuelven solos al salir.
+- Aviso si tu cable de red va a 100 Mbps en vez de 1 Gbps (cable o puerto mal).
+
+IDIOMA / LANGUAGE (versión 8.2)
+- La app sale en español o en inglés según el idioma de Windows. Se cambia en Ajustes > Idioma.
+- The app shows in Spanish or English depending on the Windows language. Change it in Settings > Language.

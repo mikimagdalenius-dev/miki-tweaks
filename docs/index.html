@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Miki Tweaks · Optimiza tu PC para jugar en competitivo</title>
+<meta name="description" content="App gratuita y de código abierto que optimiza Windows, la red y tus juegos competitivos. Mide la mejora con su benchmark. Todo se puede deshacer.">
+<link rel="icon" href="favicon.ico">
+<style>
+  :root { --bg:#0b0b0c; --card:#131315; --line:#232326; --text:#ededef; --muted:#8e8e95; --quiet:#5f5f66; --acc:#c6f432; --acc-ink:#0b0b0c; }
+  * { box-sizing:border-box; }
+  html { scroll-behavior:smooth; }
+  body { margin:0; background:var(--bg); color:var(--text); font:16px/1.55 "Segoe UI Variable Text","Segoe UI",system-ui,-apple-system,sans-serif; -webkit-font-smoothing:antialiased; }
+  a { color:inherit; }
+  .wrap { max-width:1080px; margin:0 auto; padding:0 20px; }
+  nav { display:flex; align-items:center; gap:12px; padding:18px 0; }
+  nav .brand { display:flex; align-items:center; gap:10px; font-weight:600; text-decoration:none; }
+  nav .brand img { width:30px; height:30px; border-radius:7px; }
+  nav .sp { flex:1; }
+  .lang { display:flex; border:1px solid var(--line); border-radius:8px; overflow:hidden; }
+  .lang button { background:none; border:0; color:var(--muted); padding:6px 11px; font:inherit; font-size:13px; cursor:pointer; }
+  .lang button.on { background:var(--card); color:var(--text); }
+  .gh { font-size:14px; color:var(--muted); text-decoration:none; }
+  .gh:hover { color:var(--text); }
+  header.hero { padding:56px 0 28px; display:grid; gap:28px; }
+  h1 { font-size:clamp(34px,6vw,58px); line-height:1.05; letter-spacing:-.02em; margin:0; max-width:14ch; }
+  h1 em { font-style:normal; color:var(--acc); }
+  .sub { color:var(--muted); font-size:clamp(16px,2vw,19px); max-width:58ch; margin:0; }
+  .cta { display:flex; flex-wrap:wrap; gap:12px; align-items:center; }
+  .btn { display:inline-flex; align-items:center; gap:8px; padding:13px 20px; border-radius:9px; font-weight:600; text-decoration:none; border:1px solid var(--line); }
+  .btn.pri { background:var(--acc); color:var(--acc-ink); border-color:var(--acc); }
+  .btn.pri:hover { filter:brightness(1.05); }
+  .btn.sec:hover { background:var(--card); }
+  .facts { color:var(--quiet); font-size:14px; }
+  .shot { margin:8px 0 0; border:1px solid var(--line); border-radius:14px; overflow:hidden; background:var(--card); box-shadow:0 30px 80px -40px rgba(198,244,50,.25); }
+  .shot img { display:block; width:100%; height:auto; }
+  section { padding:64px 0 8px; }
+  h2 { font-size:clamp(24px,3.5vw,34px); letter-spacing:-.01em; margin:0 0 10px; }
+  .lead { color:var(--muted); margin:0 0 28px; max-width:62ch; }
+  .grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:14px; }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:20px; }
+  .card h3 { margin:0 0 6px; font-size:17px; }
+  .card p { margin:0; color:var(--muted); font-size:15px; }
+  .card .k { display:inline-block; font-size:12px; font-weight:600; color:var(--acc); margin-bottom:10px; letter-spacing:.04em; }
+  .split { display:grid; grid-template-columns:1fr 1fr; gap:24px; align-items:center; }
+  .split .shot { margin:0; }
+  ul.checks { list-style:none; padding:0; margin:0; display:grid; gap:10px; }
+  ul.checks li { padding-left:28px; position:relative; color:var(--muted); }
+  ul.checks li::before { content:"✓"; position:absolute; left:0; color:var(--acc); font-weight:700; }
+  ul.checks b { color:var(--text); font-weight:600; }
+  ol.steps { counter-reset:s; list-style:none; padding:0; margin:0; display:grid; gap:12px; }
+  ol.steps li { counter-increment:s; background:var(--card); border:1px solid var(--line); border-radius:12px; padding:16px 18px 16px 58px; position:relative; color:var(--muted); }
+  ol.steps li::before { content:counter(s); position:absolute; left:18px; top:14px; width:26px; height:26px; border-radius:7px; background:var(--acc); color:var(--acc-ink); font-weight:700; display:grid; place-items:center; font-size:14px; }
+  ol.steps b { color:var(--text); }
+  details { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:16px 18px; }
+  details + details { margin-top:10px; }
+  summary { cursor:pointer; font-weight:600; }
+  details p { color:var(--muted); margin:10px 0 0; }
+  footer { margin:72px 0 0; padding:28px 0 40px; border-top:1px solid var(--line); color:var(--quiet); font-size:14px; display:flex; flex-wrap:wrap; gap:16px; justify-content:space-between; }
+  @media (max-width:760px) { .split { grid-template-columns:1fr; } header.hero { padding-top:32px; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <nav>
+    <a class="brand" href="#"><img src="img/logo.png" alt=""><span>Miki Tweaks</span></a>
+    <span class="sp"></span>
+    <a class="gh js-repo" href="#">GitHub</a>
+    <div class="lang"><button data-set="es">ES</button><button data-set="en">EN</button></div>
+  </nav>
+
+  <header class="hero">
+    <h1 data-es="Optimiza tu PC para jugar en <em>competitivo</em>." data-en="Optimize your PC for <em>competitive</em> gaming."></h1>
+    <p class="sub" data-es="Escanea tu hardware, tu Windows y tus juegos, y propone solo los ajustes que tienen sentido en tu equipo. Mide la mejora con su propio benchmark. Todo se puede deshacer." data-en="It scans your hardware, Windows and games, and suggests only the settings that make sense on your computer. Measure the improvement with its built-in benchmark. Everything can be undone."></p>
+    <div class="cta">
+      <a class="btn pri js-dl" href="#instalar" data-es="⬇ Descargar gratis" data-en="⬇ Download for free"></a>
+      <a class="btn sec" href="#que-hace" data-es="Qué hace" data-en="What it does"></a>
+    </div>
+    <div class="facts" data-es="Gratis · Código abierto · Windows 10 y 11 · Español e inglés" data-en="Free · Open source · Windows 10 and 11 · Spanish and English"></div>
+    <figure class="shot"><img class="js-img" data-img="resumen.png" alt="Miki Tweaks"></figure>
+  </header>
+
+  <section id="que-hace">
+    <h2 data-es="Lo que hace" data-en="What it does"></h2>
+    <p class="lead" data-es="No es una lista de «tweaks» genéricos: cada ajuste aparece solo si tiene sentido en tu PC, con su explicación y su motivo." data-en="It isn't a list of generic tweaks: each setting appears only if it makes sense on your PC, with an explanation and a reason."></p>
+    <div class="grid">
+      <div class="card"><span class="k">FPS</span><h3 data-es="Ajustes por juego" data-en="Per-game settings"></h3><p data-es="Fortnite, VALORANT, LoL, CS2, Apex, Rainbow Six, Overwatch 2, Rocket League, Marvel Rivals, Dota 2 y PUBG." data-en="Fortnite, VALORANT, LoL, CS2, Apex, Rainbow Six, Overwatch 2, Rocket League, Marvel Rivals, Dota 2 and PUBG."></p></div>
+      <div class="card"><span class="k">BENCHMARK</span><h3 data-es="Mide antes y después" data-en="Measure before and after"></h3><p data-es="FPS medios, mínimos, tirones y latencia con PresentMon de Intel. Comparte el resultado como imagen." data-en="Average FPS, lows, stutters and latency with Intel's PresentMon. Share the result as an image."></p></div>
+      <div class="card"><span class="k">PING</span><h3 data-es="Herramientas de red" data-en="Network tools"></h3><p data-es="Test de bufferbloat y análisis de la ruta: sabrás si el lag viene de tu casa, de tu operador o de más lejos." data-en="Bufferbloat test and route analysis: find out whether lag comes from your home, your ISP or further away."></p></div>
+      <div class="card"><span class="k">MODOS</span><h3 data-es="Modo Juego automático" data-en="Automatic Game Mode"></h3><p data-es="Se activa al abrir un juego, pausa las descargas de Windows y vuelve solo a tu modo al cerrarlo." data-en="It turns on when you open a game, pauses Windows downloads and goes back to your mode when you close it."></p></div>
+      <div class="card"><span class="k">SALUD</span><h3 data-es="Diagnóstico del PC" data-en="PC diagnostics"></h3><p data-es="Drivers, Windows Update, RAM en doble canal, discos, batería y hasta un cable de red que va más lento de lo que debería." data-en="Drivers, Windows Update, dual-channel RAM, disks, battery and even a network cable running slower than it should."></p></div>
+      <div class="card"><span class="k">LIMPIEZA</span><h3 data-es="Menos cosas en segundo plano" data-en="Less running in the background"></h3><p data-es="Programas de inicio, apps preinstaladas, telemetría, temporales y cachés." data-en="Startup programs, preinstalled apps, telemetry, temporary files and caches."></p></div>
+    </div>
+  </section>
+
+  <section>
+    <div class="split">
+      <div>
+        <h2 data-es="Sin promesas de FPS" data-en="No FPS promises"></h2>
+        <p class="lead" data-es="Muchas apps prometen «+100 FPS». La mejora real depende de cada PC: en uno ya bien configurado es pequeña y en uno lleno de programas al arrancar puede ser grande. Por eso Miki Tweaks trae su benchmark: mide antes, aplica y vuelve a medir." data-en="Many apps promise «+100 FPS». The real improvement depends on each PC: small on a well-configured one, big on one full of startup programs. That's why Miki Tweaks includes its own benchmark: measure, apply and measure again."></p>
+        <ul class="checks">
+          <li data-es="<b>Punto de restauración</b> antes de aplicar cambios." data-en="<b>Restore point</b> before applying changes."></li>
+          <li data-es="<b>Copia de cada ajuste</b> y botón para deshacerlo: uno a uno, por tandas o todo." data-en="<b>A backup of every setting</b> and a button to undo it: one by one, in batches or all at once."></li>
+          <li data-es="<b>No toca</b> tus archivos, los antitrampas (Vanguard, EAC) ni los archivos de los juegos." data-en="<b>It never touches</b> your files, anti-cheats (Vanguard, EAC) or game files."></li>
+          <li data-es="<b>Código abierto:</b> cualquiera puede revisar lo que hace." data-en="<b>Open source:</b> anyone can review what it does."></li>
+        </ul>
+      </div>
+      <figure class="shot"><img class="js-img" data-img="red.png" alt=""></figure>
+    </div>
+  </section>
+
+  <section id="instalar">
+    <h2 data-es="Instalarla en 1 minuto" data-en="Install it in 1 minute"></h2>
+    <p class="lead" data-es="No necesita instalador ni cuenta. Requisitos: Windows 10 (22H2) u 11." data-en="No installer or account needed. Requirements: Windows 10 (22H2) or 11."></p>
+    <ol class="steps">
+      <li data-es="<b>Descarga el ZIP</b> de la última versión (botón de arriba)." data-en="<b>Download the ZIP</b> of the latest version (button above)."></li>
+      <li data-es="Clic derecho en el ZIP → <b>Propiedades → Desbloquear</b>, y después <b>Extraer todo</b>." data-en="Right-click the ZIP → <b>Properties → Unblock</b>, then <b>Extract all</b>."></li>
+      <li data-es="Abre <b>«Abrir Miki Tweaks.cmd»</b> y acepta el aviso de administrador." data-en="Open <b>«Abrir Miki Tweaks.cmd»</b> and accept the administrator prompt."></li>
+      <li data-es="Si sale «Windows protegió tu PC», pulsa <b>Más información → Ejecutar de todas formas</b>: sale porque la app aún no está firmada." data-en="If «Windows protected your PC» appears, click <b>More info → Run anyway</b>: it shows up because the app isn't signed yet."></li>
+    </ol>
+  </section>
+
+  <section>
+    <h2 data-es="Preguntas frecuentes" data-en="FAQ"></h2>
+    <details><summary data-es="¿Me pueden banear?" data-en="Can I get banned?"></summary><p data-es="No. La app cambia ajustes de Windows y la configuración oficial de los juegos, como harías tú a mano. No se mete en los procesos de los juegos ni toca los antitrampas." data-en="No. The app changes Windows settings and the games' official settings, as you would by hand. It doesn't touch game processes or anti-cheats."></p></details>
+    <details><summary data-es="¿Tengo que tenerla abierta para que funcione?" data-en="Does it have to stay open?"></summary><p data-es="No. Los ajustes quedan guardados en Windows. Ábrela de vez en cuando, sobre todo después de una actualización grande de Windows." data-en="No. Settings stay saved in Windows. Open it now and then, especially after a big Windows update."></p></details>
+    <details><summary data-es="¿Y si algo va mal?" data-en="What if something goes wrong?"></summary><p data-es="Se deshace desde la app (Historial o Ajustes → Deshacer todo) o con el punto de restauración de Windows que crea antes de aplicar." data-en="Undo it from the app (History or Settings → Undo everything) or with the Windows restore point it creates before applying."></p></details>
+    <details><summary data-es="¿Cuánto cuesta?" data-en="How much does it cost?"></summary><p data-es="Nada. Es gratis y de código abierto (licencia MIT)." data-en="Nothing. It's free and open source (MIT license)."></p></details>
+  </section>
+
+  <footer>
+    <span data-es="Miki Tweaks · Licencia MIT · Úsala bajo tu responsabilidad: la mejora depende de cada PC." data-en="Miki Tweaks · MIT License · Use it at your own risk: results depend on each PC."></span>
+    <a class="gh js-repo" href="#" data-es="Código en GitHub" data-en="Code on GitHub"></a>
+  </footer>
+</div>
+<script>
+  // Cambia esto por tu usuario de GitHub cuando crees el repositorio
+  var REPO = 'TU-USUARIO/miki-tweaks';
+  var ready = REPO.indexOf('TU-USUARIO') < 0;
+  document.querySelectorAll('.js-repo').forEach(function (a) { a.href = ready ? 'https://github.com/' + REPO : '#'; });
+  document.querySelectorAll('.js-dl').forEach(function (a) { if (ready) a.href = 'https://github.com/' + REPO + '/releases/latest'; });
+  function setLang(l) {
+    try { localStorage.setItem('mt-lang', l); } catch (e) {}
+    document.documentElement.lang = l;
+    document.querySelectorAll('[data-' + l + ']').forEach(function (el) { el.innerHTML = el.getAttribute('data-' + l); });
+    document.querySelectorAll('.js-img').forEach(function (img) { img.src = 'img/' + l + '/' + img.getAttribute('data-img'); });
+    document.querySelectorAll('.lang button').forEach(function (b) { b.classList.toggle('on', b.getAttribute('data-set') === l); });
+    document.title = l === 'en' ? 'Miki Tweaks · Optimize your PC for competitive gaming' : 'Miki Tweaks · Optimiza tu PC para jugar en competitivo';
+  }
+  document.querySelectorAll('.lang button').forEach(function (b) { b.addEventListener('click', function () { setLang(b.getAttribute('data-set')); }); });
+  var saved = null; try { saved = localStorage.getItem('mt-lang'); } catch (e) {}
+  setLang(saved || ((navigator.language || 'es').toLowerCase().indexOf('es') === 0 ? 'es' : 'en'));
+</script>
+</body>
+</html>
