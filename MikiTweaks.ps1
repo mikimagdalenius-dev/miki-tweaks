@@ -152,8 +152,8 @@ function Get-SafeSection($where, [scriptblock]$code) {
 }
 # Canal de actualizaciones: dirección https de un version.json. Se puede fijar aquí antes de repartir la app
 # (p. ej. https://raw.githubusercontent.com/<usuario>/miki-tweaks/main/version.json) o en Ajustes.
-$UpdateUrlDefault = ''
-$ProjectUrlDefault = ''   # Página del proyecto (por ejemplo, la de GitHub) cuando exista: activa el botón «Web del proyecto»
+$UpdateUrlDefault = 'https://raw.githubusercontent.com/mikimagdalenius-dev/miki-tweaks/main/version.json'
+$ProjectUrlDefault = 'https://github.com/mikimagdalenius-dev/miki-tweaks'   # Página del proyecto (por ejemplo, la de GitHub) cuando exista: activa el botón «Web del proyecto»
 $SupportUrlDefault = ''   # Enlace de donaciones (Ko-fi, GitHub Sponsors...) cuando exista: activa el botón «Apoyar el proyecto»
 $SettingsFile = Join-Path $DataDir 'ajustes.json'
 function Get-Setting($name, $default) {
