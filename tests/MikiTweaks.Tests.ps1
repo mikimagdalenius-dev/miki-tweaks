@@ -95,6 +95,40 @@ Describe 'Copias de seguridad de los ajustes' {
     }
 }
 
+Describe 'Informe de errores' {
+    BeforeEach {
+        $global:DataDir = $TestDrive
+        $global:AppVersion = '9.9'
+        Remove-Item (Join-Path $TestDrive 'errores.log') -ErrorAction SilentlyContinue
+        Import-AppFunction Get-ErrorReport
+    }
+    It 'no escribe nada en el escritorio del usuario' {
+        (Get-Content $script:Src -Raw) | Should -Not -Match "GetFolderPath\('Desktop'\)\)\s*'Miki Tweaks - errores"
+    }
+    It 'devuelve nada si no hay errores' {
+        Get-ErrorReport | Should -BeNullOrEmpty
+    }
+    It 'copia solo los últimos errores, con la versión' {
+        $sep = '-' * 70
+        $log = (1..12 | ForEach-Object { "Miki Tweaks 9.9  |  fallo $_`r`nDetalle $_`r`n$sep" }) -join "`r`n"
+        Set-Content (Join-Path $TestDrive 'errores.log') $log -Encoding UTF8
+        $r = Get-ErrorReport 3
+        $r | Should -Match '^Miki Tweaks [\d\.]+ · 3 de 12 errores'
+        $r | Should -Match 'fallo 12'
+        $r | Should -Match 'fallo 10'
+        $r | Should -Not -Match 'fallo 9\b'
+    }
+}
+
+Describe 'Traducciones' {
+    It 'el diccionario de inglés es JSON válido y no menciona el archivo del escritorio' {
+        $line = (Get-Content $script:Src -Encoding UTF8) | Where-Object { $_ -like '{"tpl":*' } | Select-Object -First 1
+        $d = $line | ConvertFrom-Json
+        @($d.map).Count | Should -BeGreaterThan 100
+        $line | Should -Not -Match 'errores\.txt'
+    }
+}
+
 Describe 'Escritura en el registro' {
     BeforeAll {
         Import-AppFunction Set-RegValue, Remove-RegValue

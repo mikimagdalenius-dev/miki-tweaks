@@ -3,7 +3,7 @@
 #   foreach ($l in 'es','en') { powershell -STA -File .\herramientas\capturas.ps1 -CapSrc .\MikiTweaks.ps1 -CapFacts .\herramientas\facts.xml -CapOut .\docs\img\$l -CapLang $l -CapKeys 'inicio,resumen,modos,Red=red,Windows=ajustes-windows' }
 # facts.xml (datos del escaneo de tu PC) se crea la primera vez y no se sube a git.
 # carga la app en modo prueba con los datos de facts.xml, la dibuja fuera de pantalla y guarda PNG.
-param([string]$CapSrc, [string]$CapFacts, [string]$CapOut, [ValidateSet('es', 'en')][string]$CapLang, [string[]]$CapKeys, [switch]$CapListKeys)
+param([string]$CapSrc, [string]$CapFacts, [string]$CapOut, [ValidateSet('es', 'en')][string]$CapLang, [string[]]$CapKeys, [switch]$CapListKeys, [switch]$CapEnd)
 $ErrorActionPreference = 'Stop'
 $CapKeys = @($CapKeys | ForEach-Object { $_ -split ',' } | Where-Object { $_ })
 
@@ -50,7 +50,7 @@ if ($CapListKeys) { Write-Output ("Secciones: " + (@($script:NavButtons.Keys) -j
 foreach ($k in $CapKeys) {
     if ($k -eq 'inicio') { continue }
     $nav, $file = $k -split '=', 2; if (-not $file) { $file = $nav }
-    if ($script:NavButtons.ContainsKey($nav)) { Select-Nav $nav; Snap $file } else { Write-Output "  (no existe la sección $nav)" }
+    if ($script:NavButtons.ContainsKey($nav)) { Select-Nav $nav; if ($CapEnd) { DoEvents; $UI.MainScroll.ScrollToEnd(); DoEvents }; Snap $file } else { Write-Output "  (no existe la sección $nav)" }
 }
 Stop-Monitor; $window.Close()
 Write-Output "Puntuación: $(Get-Score) · lateral: $($UI.SideScore.Text) · idioma: $script:Lang"
