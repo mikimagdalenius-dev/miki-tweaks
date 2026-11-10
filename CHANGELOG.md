@@ -1,5 +1,9 @@
 # Cambios
 
+## 8.5.1
+- **Corregido:** al abrir la app desde su acceso directo, en Windows 11 se creía en Windows 10. Mostraba avisos de Windows 10, ocultaba ajustes de Windows 11, ofrecía ajustes de Windows 10 y buscaba el driver de NVIDIA para Windows 10.
+- Si en tu Windows 11 se aplicó algún ajuste de Windows 10 por ese fallo, aparece en Limpieza marcado como «Aplicado por error» para que puedas deshacerlo.
+
 ## 8.5
 - **Se actualiza sola:** al abrir la app busca la versión nueva, la descarga y la instala en segundo plano (con la misma comprobación de huella de siempre). Se usa la próxima vez que la abras, o al momento con «Reiniciar ahora» en Ajustes.
 - Si una actualización falla, no molesta: la app sigue como estaba y lo vuelve a intentar al abrirla.
