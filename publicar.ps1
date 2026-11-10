@@ -50,7 +50,9 @@ $a = @(Invoke-ScriptAnalyzer -Path $script -Severity Error)
 if ($a.Count) { $a | ForEach-Object { Write-Host "  línea $($_.Line): $($_.Message)" }; Falla "$($a.Count) errores de PSScriptAnalyzer" }
 
 Paso 'version.json'
-$manifest = [ordered]@{ version = $Version; url = "https://raw.githubusercontent.com/$ghRepo/main/MikiTweaks.ps1"; sha256 = (Get-FileHash $script -Algorithm SHA256).Hash; notes = '' }
+# El script se descarga de la etiqueta de la versión, no de main: main tarda unos minutos en refrescarse en la caché de GitHub
+# y mientras tanto la huella no coincidiría (la app rechaza la actualización hasta el siguiente intento)
+$manifest = [ordered]@{ version = $Version; url = "https://raw.githubusercontent.com/$ghRepo/v$Version/MikiTweaks.ps1"; sha256 = (Get-FileHash $script -Algorithm SHA256).Hash; notes = '' }
 [IO.File]::WriteAllText((Join-Path $repo 'version.json'), ($manifest | ConvertTo-Json), (New-Object Text.UTF8Encoding($false)))
 
 Paso 'Tests'
