@@ -76,8 +76,7 @@
       <a class="btn pri js-dl" href="#instalar" data-es="⬇ Descargar gratis" data-en="⬇ Download for free"></a>
       <a class="btn sec" href="#que-hace" data-es="Qué hace" data-en="What it does"></a>
     </div>
-    <div class="facts" data-es="Gratis · Código abierto · Windows 10 y 11 · Español e inglés" data-en="Free · Open source · Windows 10 and 11 · Spanish and English"></div>
-      <div class="facts js-ver" hidden></div>
+    <div class="facts"><span data-es="Gratis · Código abierto · Windows 10 y 11 · Español e inglés" data-en="Free · Open source · Windows 10 and 11 · Spanish and English"></span><span class="js-ver" hidden></span></div>
     <figure class="shot"><img class="js-img" data-img="resumen.png" src="img/es/resumen.png" width="1160" height="780" alt="Resumen de Miki Tweaks: puntuación del PC, juegos detectados y hardware"></figure>
   </header>
 
@@ -154,7 +153,7 @@
       if (!rel) return;
       var z = (rel.assets || []).filter(function (x) { return x.name === 'Miki-Tweaks.zip'; })[0];
       var el = document.querySelector('.js-ver'); if (!el) return;
-      el.textContent = rel.tag_name + (z ? ' · ZIP · ' + Math.round(z.size / 1024) + ' KB' : '');
+      el.textContent = ' · ' + rel.tag_name + (z ? ' · ' + Math.round(z.size / 1024) + ' KB' : '');
       el.hidden = false;
     }).catch(function () {});
   }
