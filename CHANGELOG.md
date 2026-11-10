@@ -1,5 +1,9 @@
 # Cambios
 
+## 8.5
+- **Se actualiza sola:** al abrir la app busca la versión nueva, la descarga y la instala en segundo plano (con la misma comprobación de huella de siempre). Se usa la próxima vez que la abras, o al momento con «Reiniciar ahora» en Ajustes.
+- Si una actualización falla, no molesta: la app sigue como estaba y lo vuelve a intentar al abrirla.
+
 ## 8.4.2
 - Ajustes más claros: se quitan el campo del canal de actualizaciones y el botón «Preparar publicación», que solo servían para publicar la app. Las actualizaciones llegan siempre desde la web oficial.
 - Frases en singular cuando toca («1 ajuste», «1 actualización pendiente»…), también en inglés.
