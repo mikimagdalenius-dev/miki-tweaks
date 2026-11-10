@@ -21,7 +21,7 @@ jobs:
 
       - name: PSScriptAnalyzer (solo errores)
         run: |
-          $r = @(Invoke-ScriptAnalyzer -Path .\MikiTweaks.ps1, .\publicar.ps1 -Severity Error)
+          $r = @('.\MikiTweaks.ps1', '.\publicar.ps1' | ForEach-Object { Invoke-ScriptAnalyzer -Path $_ -Severity Error })
           $r | Format-Table Line, RuleName, Message -AutoSize -Wrap
           if ($r.Count) { exit 1 }
 
