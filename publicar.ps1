@@ -72,8 +72,11 @@ git push -q origin main "v$Version"; if ($LASTEXITCODE) { Falla 'git push falló
 Paso 'Release en GitHub'
 $nf = Join-Path $env:TEMP "mt-notas-$Version.md"
 [IO.File]::WriteAllText($nf, "$notas`n`n**Instalación:** descarga el ZIP, clic derecho → Propiedades → Desbloquear, extrae y abre «Abrir Miki Tweaks.cmd». Si ya la tienes instalada, se actualiza sola.", (New-Object Text.UTF8Encoding($false)))
-& $gh release create "v$Version" $zip --repo $ghRepo --title "Miki Tweaks $Version" --notes-file $nf
-Remove-Item $nf
+# En la release va con nombre fijo: la web descarga siempre releases/latest/download/Miki-Tweaks.zip
+$rel = Join-Path $env:TEMP "mt-release-$Version"; New-Item -ItemType Directory -Force $rel | Out-Null
+$zipRel = Join-Path $rel 'Miki-Tweaks.zip'; Copy-Item $zip $zipRel -Force
+& $gh release create "v$Version" $zipRel --repo $ghRepo --title "Miki Tweaks $Version" --notes-file $nf
+Remove-Item $nf; Remove-Item $rel -Recurse -Force
 if ($LASTEXITCODE) { Falla 'No se pudo crear la release (el código ya está subido: créala a mano o vuelve a lanzar solo este paso)' }
 
 Write-Host "`n✓ Miki Tweaks $Version publicada. Las copias instaladas se actualizarán en su próxima comprobación." -ForegroundColor Green

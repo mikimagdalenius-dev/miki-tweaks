@@ -77,7 +77,8 @@
       <a class="btn sec" href="#que-hace" data-es="Qué hace" data-en="What it does"></a>
     </div>
     <div class="facts" data-es="Gratis · Código abierto · Windows 10 y 11 · Español e inglés" data-en="Free · Open source · Windows 10 and 11 · Spanish and English"></div>
-    <figure class="shot"><img class="js-img" data-img="resumen.png" alt="Miki Tweaks"></figure>
+      <div class="facts js-ver" hidden></div>
+    <figure class="shot"><img class="js-img" data-img="resumen.png" src="img/es/resumen.png" width="1160" height="780" alt="Resumen de Miki Tweaks: puntuación del PC, juegos detectados y hardware"></figure>
   </header>
 
   <section id="que-hace">
@@ -105,7 +106,7 @@
           <li data-es="<b>Código abierto:</b> cualquiera puede revisar lo que hace." data-en="<b>Open source:</b> anyone can review what it does."></li>
         </ul>
       </div>
-      <figure class="shot"><img class="js-img" data-img="red.png" alt=""></figure>
+      <figure class="shot"><img class="js-img" data-img="red.png" src="img/es/red.png" width="1160" height="780" loading="lazy" alt="Herramientas de red de Miki Tweaks: test de bufferbloat y análisis de la ruta"></figure>
     </div>
   </section>
 
@@ -138,7 +139,25 @@
   var REPO = 'mikimagdalenius-dev/miki-tweaks';
   var ready = REPO.indexOf('TU-USUARIO') < 0;
   document.querySelectorAll('.js-repo').forEach(function (a) { a.href = ready ? 'https://github.com/' + REPO : '#'; });
-  document.querySelectorAll('.js-dl').forEach(function (a) { if (ready) a.href = 'https://github.com/' + REPO + '/releases/latest'; });
+  // Descarga directa del ZIP de la última versión (cada release lleva un Miki-Tweaks.zip con ese nombre fijo);
+  // al pulsar, la página baja a los pasos de instalación (Desbloquear, extraer, abrir)
+  document.querySelectorAll('.js-dl').forEach(function (a) {
+    if (!ready) return;
+    a.href = 'https://github.com/' + REPO + '/releases/latest/download/Miki-Tweaks.zip';
+    a.addEventListener('click', function () {
+      setTimeout(function () { var s = document.getElementById('instalar'); if (s) s.scrollIntoView({ behavior: 'smooth' }); }, 400);
+    });
+  });
+  // Versión y tamaño de la descarga, leídos de la última release (si GitHub no responde, simplemente no se muestran)
+  if (ready && window.fetch) {
+    fetch('https://api.github.com/repos/' + REPO + '/releases/latest').then(function (r) { return r.ok ? r.json() : null; }).then(function (rel) {
+      if (!rel) return;
+      var z = (rel.assets || []).filter(function (x) { return x.name === 'Miki-Tweaks.zip'; })[0];
+      var el = document.querySelector('.js-ver'); if (!el) return;
+      el.textContent = rel.tag_name + (z ? ' · ZIP · ' + Math.round(z.size / 1024) + ' KB' : '');
+      el.hidden = false;
+    }).catch(function () {});
+  }
   function setLang(l) {
     try { localStorage.setItem('mt-lang', l); } catch (e) {}
     document.documentElement.lang = l;
