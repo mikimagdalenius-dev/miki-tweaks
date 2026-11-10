@@ -1,5 +1,9 @@
 # Cambios
 
+## 8.5.2
+- **Sin Widgets:** ya no aparece si los Widgets no están instalados (antes salía siempre y fallaba en Windows 11 reciente).
+- Nuevo **Quitar Widgets** en Limpieza → Apps preinstaladas: en las versiones recientes de Windows 11, Windows bloquea la directiva de Widgets y esta es la forma de quitarlos del todo. Se reinstalan desde la Microsoft Store.
+
 ## 8.5.1
 - **Corregido:** al abrir la app desde su acceso directo, en Windows 11 se creía en Windows 10. Mostraba avisos de Windows 10, ocultaba ajustes de Windows 11, ofrecía ajustes de Windows 10 y buscaba el driver de NVIDIA para Windows 10.
 - Si en tu Windows 11 se aplicó algún ajuste de Windows 10 por ese fallo, aparece en Limpieza marcado como «Aplicado por error» para que puedas deshacerlo.
