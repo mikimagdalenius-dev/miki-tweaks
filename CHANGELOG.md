@@ -1,5 +1,10 @@
 # Cambios
 
+## 8.4.1
+- La app ya no deja archivos en tu escritorio cuando algo falla: el informe se guarda solo en su carpeta.
+- Botón **Copiar informe** (en Ajustes → Carpeta de datos y en el aviso de error) para pegarlo al reportar un fallo en GitHub.
+- En inglés, «Cache & temp files» ya no se corta en el menú lateral.
+
 ## 8.4
 - **Más clara de leer:** los textos secundarios tienen más contraste.
 - Cada juego luce su color en el Resumen y en el menú lateral.
