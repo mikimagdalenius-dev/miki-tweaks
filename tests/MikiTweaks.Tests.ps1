@@ -171,6 +171,50 @@ Describe 'Traducciones' {
     }
 }
 
+Describe 'Pausa de descargas mientras se juega' {
+    # Invoke-GameWatch real con procesos, estado y acciones simulados: cada «tick» es una vuelta de 5 s
+    BeforeAll {
+        Import-AppFunction Invoke-GameWatch
+        $global:GameDefs = @(@{ Exes = @('Juego.exe') })
+        $global:ModeDefs = @{ juego = @{ Name = 'Modo Juego' }; trabajo = @{ Name = 'Modo Diario' } }
+        function global:Get-Setting($n, $d) { $d }
+        function global:Write-ModeLog($m) { }
+        function global:Get-ModeState { $global:QaState }
+        function global:Save-ModeState($s) { $global:QaState = $s }
+        function global:Get-Process { param($Name, $ErrorAction) if ($global:QaTimeline[$global:QaTick]) { [pscustomobject]@{ Name = 'Juego' } } }
+        function global:Start-Sleep { param($Seconds) $global:QaTick++; if ($global:QaTick -ge $global:QaTimeline.Count) { throw 'fin' } }
+        function global:Suspend-Downloads { $global:QaLog += 'pausa'; if ($global:QaHayDescargas) { $global:QaState.dlPaused = @('UsoSvc') } }
+        function global:Resume-Downloads { $global:QaLog += 'reanuda'; $global:QaState.dlPaused = @() }
+        function global:Invoke-Mode($id) { $global:QaLog += "modo:$id"; $global:QaState.current = $id; if ($id -eq 'juego') { Suspend-Downloads } else { Resume-Downloads } }
+        function global:Invoke-Partidas([bool[]]$timeline, $current, [bool]$descargas = $true) {
+            $global:QaTimeline = $timeline; $global:QaTick = 0; $global:QaLog = @(); $global:QaHayDescargas = $descargas
+            $global:QaState = [pscustomobject]@{ current = $current; watchActive = $false; watchPrev = $null; dlPaused = @(); odPath = $null }
+            try { Invoke-GameWatch } catch { if ("$_" -ne 'fin') { throw } }
+            ,$global:QaLog
+        }
+    }
+    AfterAll {
+        foreach ($f in 'Get-Setting', 'Write-ModeLog', 'Get-ModeState', 'Save-ModeState', 'Get-Process', 'Start-Sleep', 'Suspend-Downloads', 'Resume-Downloads', 'Invoke-Mode', 'Invoke-Partidas', 'Invoke-GameWatch') {
+            Remove-Item "Function:\$f" -ErrorAction SilentlyContinue
+        }
+    }
+    It 'en Modo Juego fijo: pausa al abrir el juego y reanuda al cerrarlo (dos partidas)' {
+        $t = @($true, $true, $true) + @($false) * 6 + @($true, $true) + @($false) * 6
+        (Invoke-Partidas $t 'juego') -join ',' | Should -Be 'pausa,reanuda,pausa,reanuda'
+    }
+    It 'en Modo Diario: cambia a Modo Juego al abrir y vuelve al cerrar' {
+        $t = @($true, $true) + @($false) * 6
+        (Invoke-Partidas $t 'trabajo') -join ',' | Should -Be 'modo:juego,pausa,modo:trabajo,reanuda'
+    }
+    It 'si en una partida no había descargas que pausar, la siguiente vuelve a intentarlo' {
+        $t = @($true, $true) + @($false) * 3 + @($true) + @($false)
+        (Invoke-Partidas $t 'juego' $false) -join ',' | Should -Be 'pausa,pausa'
+    }
+    It 'sin juego abierto no pausa nada' {
+        (Invoke-Partidas (@($false) * 8) 'juego') | Should -BeNullOrEmpty
+    }
+}
+
 Describe 'Escritura en el registro' {
     BeforeAll {
         Import-AppFunction Set-RegValue, Remove-RegValue
