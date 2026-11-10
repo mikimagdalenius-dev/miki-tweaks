@@ -2394,11 +2394,19 @@ static class MikiTweaksLauncher {
 function Protect-DataDir {
     # La app y sus tareas se ejecutan como admin y cargan scripts, PresentMon y copias de esta carpeta:
     # si el usuario normal pudiera escribir aquí, cualquier programa podría conseguir admin sin aviso de UAC
-    $ok = { $a = Get-Acl $DataDir; $a.AreAccessRulesProtected -and $a.GetOwner([Security.Principal.SecurityIdentifier]).Value -eq 'S-1-5-32-544' }
+    $ok = {
+        $a = Get-Acl $DataDir
+        $w = [Security.AccessControl.FileSystemRights]'Write, Delete, ChangePermissions, TakeOwnership'
+        # Nadie salvo Administradores y SYSTEM puede tener permisos de escritura (p. ej. la carpeta puede traer «mikim: control total» explícito)
+        $writers = @($a.GetAccessRules($true, $true, [Security.Principal.SecurityIdentifier]) | Where-Object { $_.AccessControlType -eq 'Allow' -and ($_.FileSystemRights -band $w) -and $_.IdentityReference.Value -notin 'S-1-5-32-544', 'S-1-5-18' })
+        $a.AreAccessRulesProtected -and $a.GetOwner([Security.Principal.SecurityIdentifier]).Value -eq 'S-1-5-32-544' -and -not $writers.Count
+    }
     if (& $ok) { return }
     # El dueño también pasa a Administradores: el dueño puede cambiar los permisos aunque no tenga escritura
     & icacls.exe $DataDir /setowner '*S-1-5-32-544' /T /C /Q | Out-Null
-    # Solo en la raíz (con /T los archivos se quedarían sin permisos) y luego todo lo de dentro hereda de ella
+    # Solo en la raíz (con /T los archivos se quedarían sin permisos) y luego todo lo de dentro hereda de ella.
+    # El /reset previo quita permisos explícitos que /grant:r no toca (como «usuario: control total»)
+    & icacls.exe $DataDir /reset /Q | Out-Null
     & icacls.exe $DataDir /inheritance:r /grant:r '*S-1-5-32-544:(OI)(CI)F' '*S-1-5-18:(OI)(CI)F' '*S-1-5-32-545:(OI)(CI)RX' /Q | Out-Null
     & icacls.exe (Join-Path $DataDir '*') /reset /T /C /Q | Out-Null
     if (-not (& $ok)) { throw 'icacls no pudo proteger la carpeta de datos' }   # icacls con /C devuelve 0 aunque falle
