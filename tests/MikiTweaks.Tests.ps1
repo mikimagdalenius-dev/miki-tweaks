@@ -121,6 +121,34 @@ Describe 'Informe de errores' {
 }
 
 Describe 'Traducciones' {
+    BeforeAll {
+        # El traductor real de la app (clase C# MtI18n) con su diccionario
+        $code = Get-Content $script:Src -Raw -Encoding UTF8
+        $cs = [regex]::Match($code, "(?s)\`$I18nCs\s*=\s*@'\r?\n(.*?)\r?\n'@").Groups[1].Value
+        if (-not ('MtI18n' -as [type])) {
+            Add-Type -AssemblyName PresentationFramework, PresentationCore, WindowsBase, System.Xaml
+            Add-Type -TypeDefinition $cs -ReferencedAssemblies PresentationFramework, PresentationCore, WindowsBase, System.Xaml
+            $d = ((Get-Content $script:Src -Encoding UTF8) | Where-Object { $_ -like '{"tpl":*' } | Select-Object -First 1) | ConvertFrom-Json
+            foreach ($p in $d.map) { [MtI18n]::Add([string]$p[0], [string]$p[1]) }
+            foreach ($t in $d.tpl) { [MtI18n]::AddTpl([string]$t[0], [string]$t[1]) }
+        }
+        [MtI18n]::On = $true
+    }
+    It 'traduce bien el singular y el plural: <es>' -TestCases @(
+        @{ es = 'Perfil guardado: 1 ajuste'; en = 'Profile saved: 1 setting' }
+        @{ es = 'Perfil guardado: 3 ajustes'; en = 'Profile saved: 3 settings' }
+        @{ es = '1 actualización de Windows pendiente'; en = '1 pending Windows update' }
+        @{ es = '4 actualizaciones de Windows pendientes'; en = '4 pending Windows updates' }
+        @{ es = 'Detectada: 1 tarea'; en = 'Detected: 1 task' }
+        @{ es = '✓ 1 actualización instalada.'; en = '✓ 1 update installed.' }
+        @{ es = 'Devuelve a su valor anterior el ajuste de esta tanda que sigue activo'; en = 'Restores the previous value of the setting from this batch that is still active' }
+    ) {
+        param($es, $en)
+        [MtI18n]::T($es) | Should -Be $en
+    }
+    It 'solo hay una declaración de versión escrita a mano' {
+        @([regex]::Matches((Get-Content $script:Src -Raw), "\`$AppVersion\s*=\s*'\d")).Count | Should -Be 1
+    }
     It 'el diccionario de inglés es JSON válido y no menciona el archivo del escritorio' {
         $line = (Get-Content $script:Src -Encoding UTF8) | Where-Object { $_ -like '{"tpl":*' } | Select-Object -First 1
         $d = $line | ConvertFrom-Json

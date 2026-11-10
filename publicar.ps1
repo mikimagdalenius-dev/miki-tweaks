@@ -37,7 +37,8 @@ Paso "Versión $Version en el script"
 $txt = [IO.File]::ReadAllText($script)
 $actual = [regex]::Match($txt, "\`$AppVersion\s*=\s*'([^']+)'").Groups[1].Value
 if ([version]$Version -le [version]$actual -and $Version -ne $actual) { Falla "La versión $Version no es mayor que la actual ($actual)" }
-$txt = [regex]::Replace($txt, "(\`$AppVersion\s*=\s*)'[^']+'", "`${1}'$Version'", 1)
+# Solo la declaración (inicio de línea): el estático [regex]::Replace(..., 1) tomaba el 1 como opción y cambiaba todas las apariciones
+$txt = ([regex]"(?m)^(\`$AppVersion\s*=\s*)'[^']+'").Replace($txt, "`${1}'$Version'", 1)
 [IO.File]::WriteAllText($script, $txt, (New-Object Text.UTF8Encoding($true)))   # con BOM: PowerShell 5.1 lo necesita para los acentos
 
 Paso 'Sintaxis'
