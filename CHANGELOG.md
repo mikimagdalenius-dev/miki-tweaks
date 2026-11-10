@@ -1,5 +1,10 @@
 # Cambios
 
+## 8.5.3
+- **Corregido:** el Modo Juego dejaba Windows Update en pausa mientras siguieras en ese modo, a veces semanas. Ahora las descargas solo se pausan con un juego abierto y vuelven unos segundos después de cerrarlo. Al abrir la app, si se habían quedado en pausa sin ningún juego abierto, se reanudan.
+- Deshacer los ajustes de arranque (bcdedit), la hibernación y las tareas de telemetría ya no borra la copia del valor original si Windows no deja restaurarlo: avisa y se puede reintentar.
+- Historial traducido al inglés y la línea de la pantalla en «Tu equipo» ya no se corta.
+
 ## 8.5.2
 - **Sin Widgets:** ya no aparece si los Widgets no están instalados (antes salía siempre y fallaba en Windows 11 reciente).
 - Nuevo **Quitar Widgets** en Limpieza → Apps preinstaladas: en las versiones recientes de Windows 11, Windows bloquea la directiva de Widgets y esta es la forma de quitarlos del todo. Se reinstalan desde la Microsoft Store.
