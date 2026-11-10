@@ -1,0 +1,32 @@
+name: Algo falla / Bug report
+description: Cuéntanos qué ha fallado para poder arreglarlo / Tell us what went wrong
+labels: [fallo]
+body:
+  - type: textarea
+    id: que
+    attributes:
+      label: ¿Qué ha pasado? / What happened?
+      description: Qué hiciste, qué esperabas y qué pasó en realidad. / What you did, what you expected and what actually happened.
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Versión de Miki Tweaks / Version
+      description: Ajustes → Acerca de / Settings → About
+      placeholder: "8.3"
+    validations:
+      required: true
+  - type: input
+    id: windows
+    attributes:
+      label: Windows
+      placeholder: "Windows 11 Home 24H2"
+  - type: textarea
+    id: log
+    attributes:
+      label: Informe de errores / Error report
+      description: |
+        Pega aquí el contenido de `errores.log` (pulsa Win+R, escribe `%LOCALAPPDATA%\MikiTweaks` y ábrelo con el Bloc de notas). Échale un vistazo antes: puede incluir rutas de tu PC, como tu nombre de usuario.
+        Paste the contents of `errores.log` (Win+R → `%LOCALAPPDATA%\MikiTweaks`). Check it first: it may include paths with your user name.
+      render: text

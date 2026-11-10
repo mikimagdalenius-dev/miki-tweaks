@@ -1,0 +1,35 @@
+# Comprueba cada push y pull request en un Windows de GitHub con PowerShell 5.1 (el mismo que usa la app)
+name: Comprobar
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  comprobar:
+    runs-on: windows-latest
+    defaults:
+      run:
+        shell: powershell
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Instalar Pester y PSScriptAnalyzer
+        run: |
+          Install-Module Pester -MinimumVersion 5.5 -Scope CurrentUser -Force -SkipPublisherCheck
+          Install-Module PSScriptAnalyzer -Scope CurrentUser -Force
+
+      - name: PSScriptAnalyzer (solo errores)
+        run: |
+          $r = @(Invoke-ScriptAnalyzer -Path .\MikiTweaks.ps1, .\publicar.ps1 -Severity Error)
+          $r | Format-Table Line, RuleName, Message -AutoSize -Wrap
+          if ($r.Count) { exit 1 }
+
+      - name: Tests
+        run: |
+          Import-Module Pester -MinimumVersion 5.5
+          $c = New-PesterConfiguration
+          $c.Run.Path = '.\tests'
+          $c.Run.Exit = $true
+          $c.Output.Verbosity = 'Detailed'
+          Invoke-Pester -Configuration $c
