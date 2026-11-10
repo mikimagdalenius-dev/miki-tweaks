@@ -1,5 +1,9 @@
 # Cambios
 
+## 8.4.2
+- Ajustes más claros: se quitan el campo del canal de actualizaciones y el botón «Preparar publicación», que solo servían para publicar la app. Las actualizaciones llegan siempre desde la web oficial.
+- Frases en singular cuando toca («1 ajuste», «1 actualización pendiente»…), también en inglés.
+
 ## 8.4.1
 - La app ya no deja archivos en tu escritorio cuando algo falla: el informe se guarda solo en su carpeta.
 - Botón **Copiar informe** (en Ajustes → Carpeta de datos y en el aviso de error) para pegarlo al reportar un fallo en GitHub.
