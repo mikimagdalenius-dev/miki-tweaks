@@ -1,5 +1,12 @@
 # Cambios
 
+## 8.4
+- **Más clara de leer:** los textos secundarios tienen más contraste.
+- Cada juego luce su color en el Resumen y en el menú lateral.
+- El nombre de la gráfica ya no se corta en «Tu equipo».
+- La puntuación del Resumen y la del menú lateral siempre coinciden (tras cambiar de modo podían diferir).
+- Barra de desplazamiento más discreta.
+
 ## 8.3
 - **Ajustes avanzados con pruebas** para Windows 10 y 11 (solo aparecen si hacen falta): temporizadores de arranque en automático, modo MSI de la gráfica, sin Fault Tolerant Heap, el juego no baja de volumen en las llamadas, sin inicio rápido, Windows Update no cambia tus drivers, sin transparencias y sin marca de último acceso.
 - **Seguridad:** la carpeta de la app solo la pueden modificar los administradores, así ningún programa puede usarla para conseguir permisos de admin sin el aviso de Windows.

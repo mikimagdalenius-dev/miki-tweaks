@@ -81,7 +81,7 @@ foreach ($gf in @($(if ($PSScriptRoot) { Join-Path $PSScriptRoot 'juegos.json' }
             $h = @{}; foreach ($p in $g.PSObject.Properties) { $h[$p.Name] = $p.Value }
             foreach ($k in 'Exes', 'Rel', 'EpicRel', 'RiotRel', 'Tips') { $h[$k] = @($h[$k] | Where-Object { $_ }) }
             if (-not $h.Abbr) { $h.Abbr = "$($h.Name)".Substring(0, [math]::Min(3, "$($h.Name)".Length)).ToUpper() }
-            if (-not $h.Color) { $h.Color = '#475569' }; if (-not $h.Api) { $h.Api = 'dx11' }
+            if ("$($h.Color)" -notmatch '^#[0-9A-Fa-f]{6}$') { $h.Color = '#475569' }; if (-not $h.Api) { $h.Api = 'dx11' }   # el color se usa con transparencia (#AARRGGBB)
             if ($h.Id -and $h.Name -and $h.Exes.Count -and -not ($GameDefs | Where-Object { $_.Id -eq $h.Id })) { $GameDefs += $h }
         }
     } catch {}
@@ -111,7 +111,7 @@ function Clear-BackupItem($key) { if ($script:Backup.ContainsKey($key)) { $scrip
 function Test-HasBackup($id) { foreach ($k in @($script:Backup.Keys)) { if ($k -eq $id -or $k -like "$id#*") { return $true } }; return $false }
 
 # ======================= Ajustes de la app =======================
-$AppVersion   = '8.3'
+$AppVersion   = '8.4'
 
 # ======================= Protección contra errores =======================
 # Si algo falla en un PC concreto, la app no se cierra: guarda el detalle y sigue con lo demás.
@@ -2584,7 +2584,13 @@ if ($env:FT_TEST -ne '1') { Invoke-OldInstallCleanup; Install-App }
       <Setter Property="Template"><Setter.Value>
         <ControlTemplate TargetType="ScrollBar">
           <Track x:Name="PART_Track" IsDirectionReversed="True">
-            <Track.Thumb><Thumb><Thumb.Template><ControlTemplate TargetType="Thumb"><Border CornerRadius="4" Background="#2E2E33" Margin="1,0"/></ControlTemplate></Thumb.Template></Thumb></Track.Thumb>
+            <Track.Thumb><Thumb><Thumb.Template><ControlTemplate TargetType="Thumb">
+              <Border x:Name="t" CornerRadius="3" Background="#26262B" Margin="2,0"/>
+              <ControlTemplate.Triggers>
+                <Trigger Property="IsMouseOver" Value="True"><Setter TargetName="t" Property="Background" Value="#3A3A40"/></Trigger>
+                <Trigger Property="IsDragging" Value="True"><Setter TargetName="t" Property="Background" Value="#4A4A51"/></Trigger>
+              </ControlTemplate.Triggers>
+            </ControlTemplate></Thumb.Template></Thumb></Track.Thumb>
           </Track>
         </ControlTemplate>
       </Setter.Value></Setter>
@@ -2676,7 +2682,7 @@ if ($env:FT_TEST -ne '1') { Invoke-OldInstallCleanup; Install-App }
               <TextBlock Grid.Row="3" Grid.Column="1" FontSize="12.5" Foreground="#B4B4BA" Margin="0,22,0,0" TextWrapping="Wrap"
                          Text="Medal, Riot Vanguard, tus planes de energía, Xbox, Microsoft Store, Defender ni Windows Update."/>
             </Grid>
-            <TextBlock Text="Al usar Miki Tweaks aceptas que cambie ajustes de Windows bajo tu responsabilidad. Todo se puede deshacer y nada se toca sin que lo marques." FontSize="11.5" Foreground="#5F5F66" Margin="0,18,0,0" TextWrapping="Wrap"/>
+            <TextBlock Text="Al usar Miki Tweaks aceptas que cambie ajustes de Windows bajo tu responsabilidad. Todo se puede deshacer y nada se toca sin que lo marques." FontSize="11.5" Foreground="#82828A" Margin="0,18,0,0" TextWrapping="Wrap"/>
           </StackPanel>
         </Grid>
 
@@ -2714,7 +2720,7 @@ if ($env:FT_TEST -ne '1') { Invoke-OldInstallCleanup; Install-App }
               <Border DockPanel.Dock="Bottom" CornerRadius="6" Background="#131315" BorderBrush="#232326" BorderThickness="1" Padding="12,10" Margin="0,0,0,10">
                 <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="Auto"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
                   <Grid Width="38" Height="38"><Ellipse Stroke="#232326" StrokeThickness="4"/><Path x:Name="SideArc" StrokeThickness="4" StrokeStartLineCap="Round" StrokeEndLineCap="Round" Stroke="{StaticResource AccentGrad}"/><TextBlock x:Name="SideScore" FontSize="11.5" FontWeight="SemiBold" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"/></Grid>
-                  <StackPanel Grid.Column="1" Margin="10,0,0,0" VerticalAlignment="Center"><TextBlock Text="Puntuación de tu PC" FontSize="11" Foreground="#76767D"/><TextBlock x:Name="SideMode" FontSize="12.5" FontWeight="SemiBold" Foreground="#C8C8CD" TextTrimming="CharacterEllipsis"/></StackPanel>
+                  <StackPanel Grid.Column="1" Margin="10,0,0,0" VerticalAlignment="Center"><TextBlock Text="Puntuación de tu PC" FontSize="11" Foreground="#82828A"/><TextBlock x:Name="SideMode" FontSize="12.5" FontWeight="SemiBold" Foreground="#C8C8CD" TextTrimming="CharacterEllipsis"/></StackPanel>
                 </Grid>
               </Border>
               <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled"><StackPanel x:Name="NavPanel"/></ScrollViewer>
@@ -2732,8 +2738,8 @@ if ($env:FT_TEST -ne '1') { Invoke-OldInstallCleanup; Install-App }
               <StackPanel x:Name="SecTools" Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Bottom" Margin="20,0,0,0" Visibility="Collapsed">
                 <Border CornerRadius="6" Background="#161618" BorderBrush="#2A2A2E" BorderThickness="1" Padding="12,0" Width="220" Height="38">
                   <Grid>
-                    <TextBlock FontFamily="Segoe Fluent Icons, Segoe MDL2 Assets" Text="&#xE721;" FontSize="12" Foreground="#76767D" VerticalAlignment="Center"/>
-                    <TextBlock x:Name="SecSearchHint" Text="Buscar en esta sección" Margin="24,0,0,0" FontSize="13" Foreground="#5F5F66" VerticalAlignment="Center" IsHitTestVisible="False"/>
+                    <TextBlock FontFamily="Segoe Fluent Icons, Segoe MDL2 Assets" Text="&#xE721;" FontSize="12" Foreground="#82828A" VerticalAlignment="Center"/>
+                    <TextBlock x:Name="SecSearchHint" Text="Buscar en esta sección" Margin="24,0,0,0" FontSize="13" Foreground="#82828A" VerticalAlignment="Center" IsHitTestVisible="False"/>
                     <TextBox x:Name="SecSearch" Margin="22,0,0,0" Background="Transparent" BorderThickness="0" Foreground="#EDEDEF" CaretBrush="White" SelectionBrush="{DynamicResource AccentBrush}" FontSize="13" VerticalAlignment="Center"/>
                   </Grid>
                 </Border>
@@ -2908,7 +2914,7 @@ function New-TweakCard($t) {
    <TextBlock Text="$(Esc $t.Desc)" FontSize="12.5" Foreground="#8E8E95" TextWrapping="Wrap" LineHeight="19" Margin="0,3,0,0"/>
    <StackPanel Orientation="Horizontal" Margin="0,9,0,0">
     <TextBlock FontFamily="Segoe Fluent Icons, Segoe MDL2 Assets" Text="&#xE721;" FontSize="11" Foreground="#5F5F66" VerticalAlignment="Center"/>
-    <TextBlock Text="$(Esc $t.Why)" FontSize="12" Foreground="#76767D" Margin="7,0,0,0"/>
+    <TextBlock Text="$(Esc $t.Why)" FontSize="12" Foreground="#82828A" Margin="7,0,0,0"/>
    </StackPanel>
   </StackPanel>
   <StackPanel Grid.Column="2" VerticalAlignment="Center" MinWidth="110">
@@ -2928,7 +2934,7 @@ function New-TweakCard($t) {
     return $card
 }
 
-function New-Header($text, $top = 6) { New-El "<TextBlock {NS} Text=`"$(Esc $text)`" FontSize=`"11.5`" FontWeight=`"SemiBold`" Foreground=`"#76767D`" Margin=`"2,$top,0,12`"/>" }
+function New-Header($text, $top = 6) { New-El "<TextBlock {NS} Text=`"$(Esc $text)`" FontSize=`"11.5`" FontWeight=`"SemiBold`" Foreground=`"#82828A`" Margin=`"2,$top,0,12`"/>" }
 
 function Build-CategoryPanel($c) {
     $sp = New-Object Windows.Controls.StackPanel
@@ -2953,13 +2959,13 @@ function Build-CategoryPanel($c) {
         if ($tips.Count) {
             [void]$sp.Children.Add((New-Header 'DENTRO DEL JUEGO  ·  REVÍSALO EN SUS AJUSTES' 18))
             $rows = ($tips | ForEach-Object { "<StackPanel Orientation=`"Horizontal`" Margin=`"0,5`"><TextBlock FontFamily=`"Segoe Fluent Icons, Segoe MDL2 Assets`" Text=`"&#xE73E;`" FontSize=`"12`" Foreground=`"#4CC38A`" VerticalAlignment=`"Center`"/><TextBlock Text=`"$(Esc $_)`" FontSize=`"13`" Foreground=`"#C8C8CD`" Margin=`"12,0,0,0`" TextWrapping=`"Wrap`"/></StackPanel>" }) -join ''
-            [void]$sp.Children.Add((New-El "<Border {NS} CornerRadius=`"8`" Background=`"#131315`" BorderBrush=`"#232326`" BorderThickness=`"1`" Padding=`"20,14`" Margin=`"0,0,0,10`"><StackPanel>$rows<TextBlock Text=`"Estas opciones las guarda el propio juego o tu cuenta, así que la app no las cambia por ti.`" FontSize=`"12`" Foreground=`"#76767D`" Margin=`"0,10,0,0`" TextWrapping=`"Wrap`"/></StackPanel></Border>"))
+            [void]$sp.Children.Add((New-El "<Border {NS} CornerRadius=`"8`" Background=`"#131315`" BorderBrush=`"#232326`" BorderThickness=`"1`" Padding=`"20,14`" Margin=`"0,0,0,10`"><StackPanel>$rows<TextBlock Text=`"Estas opciones las guarda el propio juego o tu cuenta, así que la app no las cambia por ti.`" FontSize=`"12`" Foreground=`"#82828A`" Margin=`"0,10,0,0`" TextWrapping=`"Wrap`"/></StackPanel></Border>"))
         }
     }
     return $sp
 }
 
-function New-HwCard($tag, $tagBg, $tagFg, $label, $value, $sub) {
+function New-HwCard($tag, $tagBg, $tagFg, $label, $value, $sub, $tip = $value) {
     New-El @"
 <Border {NS} Width="256" Height="100" CornerRadius="8" Background="#131315" BorderBrush="#232326" BorderThickness="1" Padding="16,14" Margin="0,0,12,12">
  <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="Auto"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
@@ -2967,8 +2973,8 @@ function New-HwCard($tag, $tagBg, $tagFg, $label, $value, $sub) {
    <TextBlock Text="$tag" FontSize="11.5" FontWeight="SemiBold" Foreground="$tagFg" HorizontalAlignment="Center" VerticalAlignment="Center"/>
   </Border>
   <StackPanel Grid.Column="1" Margin="14,0,0,0">
-   <TextBlock Text="$(Esc $label)" FontSize="11.5" Foreground="#76767D"/>
-   <TextBlock Text="$(Esc $value)" ToolTip="$(Esc $value)" FontSize="14.5" FontWeight="SemiBold" Foreground="#EDEDEF" TextTrimming="CharacterEllipsis" Margin="0,3,0,0"/>
+   <TextBlock Text="$(Esc $label)" FontSize="11.5" Foreground="#82828A"/>
+   <TextBlock Text="$(Esc $value)" ToolTip="$(Esc $tip)" FontSize="14.5" FontWeight="SemiBold" Foreground="#EDEDEF" TextTrimming="CharacterEllipsis" Margin="0,3,0,0"/>
    <TextBlock Text="$(Esc $sub)" FontSize="12" Foreground="#8E8E95" TextTrimming="CharacterEllipsis" Margin="0,3,0,0"/>
   </StackPanel>
  </Grid>
@@ -2987,7 +2993,7 @@ function Build-Summary {
    <Path x:Name="Arc" StrokeThickness="6" StrokeStartLineCap="Round" StrokeEndLineCap="Round" Stroke="{DynamicResource AccentBrush}"/>
    <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
     <TextBlock x:Name="ScoreNum" Text="0" FontSize="42" FontWeight="SemiBold" Foreground="#EDEDEF" HorizontalAlignment="Center"/>
-    <TextBlock Text="de 100" FontSize="12" Foreground="#76767D" HorizontalAlignment="Center" Margin="0,-4,0,0"/>
+    <TextBlock Text="de 100" FontSize="12" Foreground="#82828A" HorizontalAlignment="Center" Margin="0,-4,0,0"/>
    </StackPanel>
   </Grid>
   <StackPanel Grid.Column="1" Margin="28,0,0,0" VerticalAlignment="Center">
@@ -3034,7 +3040,7 @@ function Build-Summary {
             $card = New-El @"
 <Border {NS} Width="256" Height="72" CornerRadius="8" Background="#131315" BorderBrush="#232326" BorderThickness="1" Padding="14,12" Margin="0,0,12,12" Cursor="Hand">
  <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="Auto"/><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
-  <Border Width="40" Height="40" CornerRadius="6" Background="#1C1C1F" BorderBrush="#2A2A2E" BorderThickness="1"><TextBlock Text="$($d.Abbr)" FontSize="12" FontWeight="SemiBold" Foreground="#C8C8CD" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+  <Border Width="40" Height="40" CornerRadius="6" Background="#4D$($d.Color.TrimStart('#'))" BorderBrush="#8C$($d.Color.TrimStart('#'))" BorderThickness="1"><TextBlock Text="$(Esc $d.Abbr)" FontSize="12" FontWeight="Bold" Foreground="#F4F4F6" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
   <StackPanel Grid.Column="1" Margin="14,0,0,0" VerticalAlignment="Center">
    <TextBlock Text="$(Esc $d.Name)" FontSize="14.5" FontWeight="SemiBold" Foreground="#EDEDEF" TextTrimming="CharacterEllipsis"/>
    <TextBlock Text="$sub" FontSize="12" Foreground="$subCol" Margin="0,3,0,0"/>
@@ -3056,7 +3062,11 @@ function Build-Summary {
     $pwr = if ($f.OnAC) { 'Enchufado' } else { "Batería $($f.BatteryPct) %" }
     $ramSub = "$($f.RamModules)x$($f.RamModGB) GB" + $(if ($f.RamSpeed) { " · $($f.RamSpeed) MT/s" } else { '' })
     [void]$wp.Children.Add((New-HwCard 'CPU' '#1C1C1F' '#A0A0A7' 'Procesador' $f.CPU "$($f.Cores) núcleos · $($f.Threads) hilos"))
-    [void]$wp.Children.Add((New-HwCard 'GPU' '#1C1C1F' '#A0A0A7' 'Gráfica' $f.GPU $drv))
+    # «NVIDIA GeForce RTX 4060 Laptop GPU» no cabe en la tarjeta: la marca va en la línea del driver y el nombre completo en el tooltip
+    $gpuVendor = if ("$($f.GPU)" -match '^(NVIDIA|AMD)\s') { $Matches[1] } else { '' }
+    $gpuShort = ("$($f.GPU)" -replace '^NVIDIA\s+(GeForce\s+)?', '' -replace '^AMD\s+', '').Trim()
+    if (-not $gpuShort) { $gpuShort = "$($f.GPU)" }
+    [void]$wp.Children.Add((New-HwCard 'GPU' '#1C1C1F' '#A0A0A7' 'Gráfica' $gpuShort "$(if ($gpuVendor) { "$gpuVendor · " })$drv" $f.GPU))
     [void]$wp.Children.Add((New-HwCard 'RAM' '#1C1C1F' '#A0A0A7' 'Memoria' "$($f.RamGB) GB $($f.RamType)" $ramSub))
     [void]$wp.Children.Add((New-HwCard 'HZ' '#1C1C1F' '#E0B954' 'Pantalla principal' "$($f.MainHz) Hz" $scr))
     [void]$wp.Children.Add((New-HwCard 'SSD' '#1C1C1F' '#C8C8CD' 'Almacenamiento' $f.Disk "$($f.DiskFreeGB) GB libres de $($f.DiskSizeGB) GB"))
@@ -3172,7 +3182,7 @@ function Build-UpdatesPanel {
    <TextBlock Text="$(Esc $f.GPU)" FontSize="15" FontWeight="SemiBold" Foreground="#EDEDEF"/>
    <TextBlock Text="Instalado: $(Esc $inst)" FontSize="12.5" Foreground="#8E8E95" Margin="0,4,0,0"/>
    <TextBlock x:Name="DrvState" FontSize="13" FontWeight="SemiBold" Foreground="#8E8E95" Margin="0,8,0,0" TextWrapping="Wrap"/>
-   <TextBlock x:Name="DrvHint" FontSize="12" Foreground="#76767D" Margin="0,4,0,0" TextWrapping="Wrap" Visibility="Collapsed" Text="Al instalarlo, elige &quot;Instalación personalizada&quot; y marca &quot;Instalación limpia&quot;."/>
+   <TextBlock x:Name="DrvHint" FontSize="12" Foreground="#82828A" Margin="0,4,0,0" TextWrapping="Wrap" Visibility="Collapsed" Text="Al instalarlo, elige &quot;Instalación personalizada&quot; y marca &quot;Instalación limpia&quot;."/>
   </StackPanel>
   <StackPanel Grid.Column="2" VerticalAlignment="Center" MinWidth="150">
    <Button x:Name="DrvBtn" Style="{DynamicResource Primary}" Content="Descargar" Visibility="Collapsed"/>
@@ -3201,7 +3211,7 @@ function Build-UpdatesPanel {
 </Border>
 "@
     [void]$sp.Children.Add($wu)
-    [void]$sp.Children.Add((New-El "<TextBlock {NS} Text=`"Las actualizaciones opcionales (normalmente drivers alternativos) se muestran pero no se instalan: el driver de la gráfica es mejor instalarlo desde arriba.`" FontSize=`"12`" Foreground=`"#76767D`" TextWrapping=`"Wrap`" Margin=`"2,4,0,0`"/>"))
+    [void]$sp.Children.Add((New-El "<TextBlock {NS} Text=`"Las actualizaciones opcionales (normalmente drivers alternativos) se muestran pero no se instalan: el driver de la gráfica es mejor instalarlo desde arriba.`" FontSize=`"12`" Foreground=`"#82828A`" TextWrapping=`"Wrap`" Margin=`"2,4,0,0`"/>"))
 
     $script:Upd = @{}
     foreach ($n in 'DrvState', 'DrvHint', 'DrvBtn', 'DrvRecheck') { $script:Upd[$n] = $drv.FindName($n) }
@@ -3427,7 +3437,7 @@ function Build-CachePanel {
             [void]$sp.Children.Add($card)
         }
     }
-    [void]$sp.Children.Add((New-El "<TextBlock {NS} Text=`"Nunca se tocan tus documentos, descargas, partidas guardadas ni clips de Medal. Si un archivo está en uso, simplemente se salta.`" FontSize=`"12`" Foreground=`"#76767D`" TextWrapping=`"Wrap`" Margin=`"2,4,0,0`"/>"))
+    [void]$sp.Children.Add((New-El "<TextBlock {NS} Text=`"Nunca se tocan tus documentos, descargas, partidas guardadas ni clips de Medal. Si un archivo está en uso, simplemente se salta.`" FontSize=`"12`" Foreground=`"#82828A`" TextWrapping=`"Wrap`" Margin=`"2,4,0,0`"/>"))
     $script:Cache.Clean.Add_Click({ Start-CacheClean })
     $script:Cache.Rescan.Add_Click({ Start-CacheScan })
     if ($script:CacheSizes) { Show-CacheSizes $script:CacheSizes } else { Start-CacheScan }
@@ -3557,7 +3567,7 @@ function New-Tile($key, $label, $color, $glyph) {
     $t = New-El @"
 <Border {NS} Width="256" Height="146" CornerRadius="8" Background="#131315" BorderBrush="#232326" BorderThickness="1" Padding="16,14" Margin="0,0,12,12">
  <Grid><Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="*"/></Grid.RowDefinitions>
-  <StackPanel Orientation="Horizontal"><Ellipse Width="7" Height="7" Fill="$color" VerticalAlignment="Center"/><TextBlock Text="$(Esc $label)" FontSize="11.5" Foreground="#76767D" Margin="8,0,0,0"/></StackPanel>
+  <StackPanel Orientation="Horizontal"><Ellipse Width="7" Height="7" Fill="$color" VerticalAlignment="Center"/><TextBlock Text="$(Esc $label)" FontSize="11.5" Foreground="#82828A" Margin="8,0,0,0"/></StackPanel>
   <TextBlock x:Name="V" Grid.Row="1" Text="..." FontSize="26" FontWeight="SemiBold" Foreground="White" Margin="0,4,0,0"/>
   <TextBlock x:Name="S" Grid.Row="2" Text=" " FontSize="11.5" Foreground="#8E8E95" TextTrimming="CharacterEllipsis"/>
   <Polyline x:Name="L" Grid.Row="3" Stroke="$color" StrokeThickness="2" StrokeLineJoin="Round" VerticalAlignment="Bottom" Margin="0,6,0,0"/>
@@ -3581,12 +3591,12 @@ function Build-MonitorPanel {
     [void]$wp.Children.Add((New-Tile 'timer' 'Resolución del temporizador' '#E0B954' ''))
     [void]$sp.Children.Add($wp)
     [void]$sp.Children.Add((New-Header 'LO QUE MÁS PROCESADOR USA AHORA' 12))
-    $top = New-El "<Border {NS} CornerRadius=`"8`" Background=`"#131315`" BorderBrush=`"#232326`" BorderThickness=`"1`" Padding=`"18,12`" Margin=`"0,0,12,0`"><StackPanel x:Name=`"Top`"><TextBlock Text=`"Midiendo...`" FontSize=`"13`" Foreground=`"#76767D`"/></StackPanel></Border>"
+    $top = New-El "<Border {NS} CornerRadius=`"8`" Background=`"#131315`" BorderBrush=`"#232326`" BorderThickness=`"1`" Padding=`"18,12`" Margin=`"0,0,12,0`"><StackPanel x:Name=`"Top`"><TextBlock Text=`"Midiendo...`" FontSize=`"13`" Foreground=`"#82828A`"/></StackPanel></Border>"
     $script:Mon.Top = $top.FindName('Top')
     [void]$sp.Children.Add($top)
     [void]$sp.Children.Add((New-Header "CONEXI$([char]0xD3)N" 18))
     [void]$sp.Children.Add((New-ConnTestCard))
-    [void]$sp.Children.Add((New-El "<TextBlock {NS} Text=`"Se actualiza cada segundo mientras tienes esta página abierta; al salir deja de medir para no gastar recursos. Truco: déjala abierta en otra pantalla mientras juegas en ventana para ver la temperatura.`" FontSize=`"12`" Foreground=`"#76767D`" TextWrapping=`"Wrap`" Margin=`"2,12,12,0`"/>"))
+    [void]$sp.Children.Add((New-El "<TextBlock {NS} Text=`"Se actualiza cada segundo mientras tienes esta página abierta; al salir deja de medir para no gastar recursos. Truco: déjala abierta en otra pantalla mientras juegas en ventana para ver la temperatura.`" FontSize=`"12`" Foreground=`"#82828A`" TextWrapping=`"Wrap`" Margin=`"2,12,12,0`"/>"))
     return $sp
 }
 function Start-Monitor {
@@ -3762,7 +3772,7 @@ function Build-SettingsPanel {
     $tg.Add_Unchecked({ try { Set-WeeklyCheck $false; Log '↺ Aviso semanal desactivado' } catch { Log "✗ Aviso semanal: $($_.Exception.Message)" } })
     $c.FindName('T').Add_Click({ param($s, $e)
         $s.IsEnabled = $false; $s.Content = 'Comprobando...'; $script:WeeklyBtn = $s
-        $work = [scriptblock]::Create("`$AppVersion = '$AppVersion'; `$UpdateUrlDefault = '$UpdateUrlDefault'; " + 'return ,@(& {' + (Get-Command Get-WeeklyStatus).Definition + '})')
+        $work = [scriptblock]::Create("`$AppVersion = '8.4'; `$UpdateUrlDefault = '$UpdateUrlDefault'; " + 'return ,@(& {' + (Get-Command Get-WeeklyStatus).Definition + '})')
         Start-Async $work $null {
             param($r)
             $b = $script:WeeklyBtn; $b.IsEnabled = $true; $b.Content = 'Probar ahora'
@@ -3790,7 +3800,7 @@ function Build-SettingsPanel {
     <Button x:Name="Chk" Style="{DynamicResource Ghost}" Content="Buscar ahora"/>
    </StackPanel>
   </Grid>
-  <TextBlock Text="Canal (dirección https de un version.json)" FontSize="12" Foreground="#76767D" Margin="0,14,0,6"/>
+  <TextBlock Text="Canal (dirección https de un version.json)" FontSize="12" Foreground="#82828A" Margin="0,14,0,6"/>
   <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
    <Border CornerRadius="6" Background="#161618" BorderBrush="#2A2A2E" BorderThickness="1" Padding="10,0" Height="34"><TextBox x:Name="Url" Background="Transparent" BorderThickness="0" Foreground="#EDEDEF" CaretBrush="White" SelectionBrush="{DynamicResource AccentBrush}" FontSize="12.5" VerticalAlignment="Center"/></Border>
    <Button x:Name="Save" Grid.Column="1" Style="{DynamicResource Ghost}" Content="Guardar" Margin="8,0,0,0"/>
@@ -3957,7 +3967,7 @@ function Build-PeripheralsPanel {
   <Border Width="42" Height="42" CornerRadius="6" Background="#1C1C1F" VerticalAlignment="Top"><TextBlock FontFamily="Segoe Fluent Icons, Segoe MDL2 Assets" Text="$g" FontSize="18" Foreground="#A0A0A7" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
   <StackPanel Grid.Column="1" Margin="16,0,16,0">
    <TextBlock Text="$(Esc $d.Name)" FontSize="15" FontWeight="SemiBold" Foreground="#EDEDEF"/>
-   <TextBlock Text="$(Esc ($sub -join '  ·  '))" FontSize="12" Foreground="#76767D" Margin="0,2,0,0"/>
+   <TextBlock Text="$(Esc ($sub -join '  ·  '))" FontSize="12" Foreground="#82828A" Margin="0,2,0,0"/>
    <TextBlock Text="$(Esc $softTxt)" FontSize="12.5" Foreground="$softCol" TextWrapping="Wrap" Margin="0,6,0,0"/>
   </StackPanel>
   <Button x:Name="B" Grid.Column="2" Style="{DynamicResource Ghost}" Content="Buscar firmware oficial" VerticalAlignment="Center" Visibility="$btnVis"/>
@@ -3969,7 +3979,7 @@ function Build-PeripheralsPanel {
         $b.Add_Click({ param($s, $e) Start-Process "$($s.Tag)" })
         [void]$sp.Children.Add($card)
     }
-    [void]$sp.Children.Add((New-El "<TextBlock {NS} Text=`"El firmware se actualiza siempre con el programa oficial de cada marca y sin desconectar el periférico mientras tanto. Ninguna app genérica puede hacerlo de forma segura.`" FontSize=`"12`" Foreground=`"#76767D`" TextWrapping=`"Wrap`" Margin=`"2,0,0,0`"/>"))
+    [void]$sp.Children.Add((New-El "<TextBlock {NS} Text=`"El firmware se actualiza siempre con el programa oficial de cada marca y sin desconectar el periférico mientras tanto. Ninguna app genérica puede hacerlo de forma segura.`" FontSize=`"12`" Foreground=`"#82828A`" TextWrapping=`"Wrap`" Margin=`"2,0,0,0`"/>"))
 
     [void]$sp.Children.Add((New-Header 'TEST DE POLLING RATE DEL RATÓN' 20))
     $poll = New-El @"
@@ -4295,7 +4305,7 @@ $RouteWork = {
 }
 
 function New-NetTile($label, $value, $color) {
-    "<StackPanel Margin=`"0,0,12,0`"><TextBlock Text=`"$(Esc $label)`" FontSize=`"11.5`" Foreground=`"#76767D`"/><TextBlock Text=`"$(Esc $value)`" FontSize=`"20`" FontWeight=`"SemiBold`" Foreground=`"$color`" Margin=`"0,2,0,0`"/></StackPanel>"
+    "<StackPanel Margin=`"0,0,12,0`"><TextBlock Text=`"$(Esc $label)`" FontSize=`"11.5`" Foreground=`"#82828A`"/><TextBlock Text=`"$(Esc $value)`" FontSize=`"20`" FontWeight=`"SemiBold`" Foreground=`"$color`" Margin=`"0,2,0,0`"/></StackPanel>"
 }
 
 function New-BloatCard {
@@ -4316,7 +4326,7 @@ function New-BloatCard {
     </Border>
     <StackPanel Grid.Column="1" Margin="18,0,0,0">
      <UniformGrid x:Name="Tiles" Columns="3"/>
-     <TextBlock x:Name="Speed" FontSize="12" Foreground="#76767D" Margin="0,8,0,0" TextWrapping="Wrap"/>
+     <TextBlock x:Name="Speed" FontSize="12" Foreground="#82828A" Margin="0,8,0,0" TextWrapping="Wrap"/>
     </StackPanel>
    </Grid>
    <TextBlock x:Name="Advice" FontSize="13" Foreground="#C8C8CD" TextWrapping="Wrap" Margin="0,12,0,0"/>
@@ -4336,7 +4346,7 @@ function New-BloatCard {
             $k.Grade.Text = $r.Grade; $k.Grade.Foreground = Br $gc
             $k.Tiles.Children.Clear()
             $fmt = { param($v) if ($null -eq $v) { 'sin medir' } else { "+$v ms" } }
-            $col = { param($v) if ($null -eq $v) { '#76767D' } elseif ($v -lt 30) { '#4CC38A' } elseif ($v -lt 60) { '#A3C94C' } elseif ($v -lt 200) { '#E8B23E' } else { '#EF6F6F' } }
+            $col = { param($v) if ($null -eq $v) { '#82828A' } elseif ($v -lt 30) { '#4CC38A' } elseif ($v -lt 60) { '#A3C94C' } elseif ($v -lt 200) { '#E8B23E' } else { '#EF6F6F' } }
             foreach ($x in @(@('En reposo', "$($r.Idle) ms", '#EDEDEF'), @('Descargando', (& $fmt $r.DownInc), (& $col $r.DownInc)), @('Subiendo', (& $fmt $r.UpInc), (& $col $r.UpInc)))) {
                 [void]$k.Tiles.Children.Add((New-El ((New-NetTile $x[0] $x[1] $x[2]) -replace '^<StackPanel ', '<StackPanel {NS} ')))
             }
@@ -4392,15 +4402,15 @@ function New-RouteCard {
             $k.Verdict.Text = $r.Verdict; $k.Verdict.Foreground = Br $(switch ($r.Level) { 'ok' { '#4CC38A' } 'warn' { '#E8B23E' } default { '#EF6F6F' } }); $k.Verdict.Visibility = 'Visible'
             if ($r.Detail) { $k.Detail.Text = $r.Detail; $k.Detail.Visibility = 'Visible' }
             $cols = "<Grid.ColumnDefinitions><ColumnDefinition Width=`"34`"/><ColumnDefinition Width=`"*`"/><ColumnDefinition Width=`"90`"/><ColumnDefinition Width=`"80`"/></Grid.ColumnDefinitions>"
-            [void]$k.Rows.Children.Add((New-El "<Grid {NS} Margin=`"0,4`">$cols<TextBlock Text=`"#`" FontSize=`"11.5`" Foreground=`"#5F5F66`"/><TextBlock Grid.Column=`"1`" Text=`"Salto`" FontSize=`"11.5`" Foreground=`"#5F5F66`"/><TextBlock Grid.Column=`"2`" Text=`"Latencia`" FontSize=`"11.5`" Foreground=`"#5F5F66`" TextAlignment=`"Right`"/><TextBlock Grid.Column=`"3`" Text=`"Pérdida`" FontSize=`"11.5`" Foreground=`"#5F5F66`" TextAlignment=`"Right`"/></Grid>"))
+            [void]$k.Rows.Children.Add((New-El "<Grid {NS} Margin=`"0,4`">$cols<TextBlock Text=`"#`" FontSize=`"11.5`" Foreground=`"#82828A`"/><TextBlock Grid.Column=`"1`" Text=`"Salto`" FontSize=`"11.5`" Foreground=`"#82828A`"/><TextBlock Grid.Column=`"2`" Text=`"Latencia`" FontSize=`"11.5`" Foreground=`"#82828A`" TextAlignment=`"Right`"/><TextBlock Grid.Column=`"3`" Text=`"Pérdida`" FontSize=`"11.5`" Foreground=`"#82828A`" TextAlignment=`"Right`"/></Grid>"))
             foreach ($h in @($r.Rows)) {
                 $lbl = if ($h.Dest) { "Destino: $($r.Target)$(if ($r.Via -eq 'tcp') { ' (medido por TCP)' })" } elseif (-not $h.Addr) { 'Sin respuesta (normal en algunos routers)' } elseif ($h.Ttl -eq 1 -and $h.Private) { "Tu router  $([char]0xB7)  $($h.Addr)" } elseif ($h.Name) { "$($h.Name)" } else { "$($h.Addr)" }
-                $fg = if (-not $h.Addr) { '#5F5F66' } elseif ($h.Dest) { '#EDEDEF' } else { '#C8C8CD' }
+                $fg = if (-not $h.Addr) { '#82828A' } elseif ($h.Dest) { '#EDEDEF' } else { '#C8C8CD' }
                 $lat = if ($null -eq $h.Avg) { '-' } else { "$($h.Avg) ms" }
                 $los = if ($null -eq $h.Loss) { '-' } else { "$($h.Loss) %" }
                 $lc = if ($null -ne $h.Loss -and $h.Loss -ge 10) { if ($h.Dest) { '#EF6F6F' } else { '#E8B23E' } } else { '#C8C8CD' }
                 $num = if ($h.Dest) { '' } else { "$($h.Ttl)" }
-                [void]$k.Rows.Children.Add((New-El "<Grid {NS} Margin=`"0,3`">$cols<TextBlock Text=`"$num`" FontSize=`"12.5`" Foreground=`"#5F5F66`"/><TextBlock Grid.Column=`"1`" Text=`"$(Esc $lbl)`" FontSize=`"12.5`" Foreground=`"$fg`" TextTrimming=`"CharacterEllipsis`" Margin=`"0,0,10,0`"/><TextBlock Grid.Column=`"2`" Text=`"$lat`" FontSize=`"12.5`" Foreground=`"$fg`" TextAlignment=`"Right`"/><TextBlock Grid.Column=`"3`" Text=`"$los`" FontSize=`"12.5`" Foreground=`"$lc`" TextAlignment=`"Right`"/></Grid>"))
+                [void]$k.Rows.Children.Add((New-El "<Grid {NS} Margin=`"0,3`">$cols<TextBlock Text=`"$num`" FontSize=`"12.5`" Foreground=`"#82828A`"/><TextBlock Grid.Column=`"1`" Text=`"$(Esc $lbl)`" FontSize=`"12.5`" Foreground=`"$fg`" TextTrimming=`"CharacterEllipsis`" Margin=`"0,0,10,0`"/><TextBlock Grid.Column=`"2`" Text=`"$lat`" FontSize=`"12.5`" Foreground=`"$fg`" TextAlignment=`"Right`"/><TextBlock Grid.Column=`"3`" Text=`"$los`" FontSize=`"12.5`" Foreground=`"$lc`" TextAlignment=`"Right`"/></Grid>"))
             }
             Log "Ruta hasta $($r.Target): $($r.Verdict)"
         }
@@ -4437,7 +4447,7 @@ function New-ConnTestCard {
             $k = $script:Conn; $k.Go.IsEnabled = $true; $k.Go.Content = 'Medir otra vez'
             if (-not $r -or $r.Error) { $k.St.Text = "No se pudo medir: $($r.Error)"; return }
             $k.St.Text = 'Latencia media · jitter (variación) · pérdida. Para jugar: menos de 50 ms, jitter bajo y 0 % de pérdida.'
-            [void]$k.Rows.Children.Add((New-El "<Grid {NS} Margin=`"0,4`"><Grid.ColumnDefinitions><ColumnDefinition Width=`"*`"/><ColumnDefinition Width=`"90`"/><ColumnDefinition Width=`"90`"/><ColumnDefinition Width=`"80`"/></Grid.ColumnDefinitions><TextBlock Text=`"Destino`" FontSize=`"11.5`" Foreground=`"#5F5F66`"/><TextBlock Grid.Column=`"1`" Text=`"Latencia`" FontSize=`"11.5`" Foreground=`"#5F5F66`" TextAlignment=`"Right`"/><TextBlock Grid.Column=`"2`" Text=`"Jitter`" FontSize=`"11.5`" Foreground=`"#5F5F66`" TextAlignment=`"Right`"/><TextBlock Grid.Column=`"3`" Text=`"Pérdida`" FontSize=`"11.5`" Foreground=`"#5F5F66`" TextAlignment=`"Right`"/></Grid>"))
+            [void]$k.Rows.Children.Add((New-El "<Grid {NS} Margin=`"0,4`"><Grid.ColumnDefinitions><ColumnDefinition Width=`"*`"/><ColumnDefinition Width=`"90`"/><ColumnDefinition Width=`"90`"/><ColumnDefinition Width=`"80`"/></Grid.ColumnDefinitions><TextBlock Text=`"Destino`" FontSize=`"11.5`" Foreground=`"#82828A`"/><TextBlock Grid.Column=`"1`" Text=`"Latencia`" FontSize=`"11.5`" Foreground=`"#82828A`" TextAlignment=`"Right`"/><TextBlock Grid.Column=`"2`" Text=`"Jitter`" FontSize=`"11.5`" Foreground=`"#82828A`" TextAlignment=`"Right`"/><TextBlock Grid.Column=`"3`" Text=`"Pérdida`" FontSize=`"11.5`" Foreground=`"#82828A`" TextAlignment=`"Right`"/></Grid>"))
             foreach ($x in @($r.Rows)) {
                 $col = if ($x.Avg -lt 0) { '#EF6F6F' } elseif ($x.Avg -le 40) { '#4CC38A' } elseif ($x.Avg -le 90) { '#E8B23E' } else { '#EF6F6F' }
                 $lat = if ($x.Avg -lt 0) { 'Sin respuesta' } else { "$($x.Avg) ms" }
@@ -4511,6 +4521,8 @@ function Update-SideStatus {
     if (-not $UI.SideScore) { return }
     $v = if ($script:Tweaks.Count) { Get-Score } else { 0 }
     $UI.SideScore.Text = "$v"
+    # El aro grande del Resumen solo se animaba al aplicar o escanear: tras cambiar de modo podía quedarse con otra cifra
+    if ($script:Arc -and $script:Tweaks.Count -and $script:ScoreTarget -ne $v) { Animate-Score }
     $p = [math]::Min([double]$v, 99.99)
     if ($p -le 0.5) { $UI.SideArc.Data = $null } else {
         $a = [math]::PI * 2 * $p / 100 - [math]::PI / 2; $x = 19 + 16 * [math]::Cos($a); $y = 19 + 16 * [math]::Sin($a)
@@ -4610,7 +4622,7 @@ function Format-Num($v, $fmt = '0') { if ($null -eq $v -or "$v" -eq '') { return
 function New-StatTile($label, $value, $sub, $color) {
     New-El @"
 <Border {NS} Width="152" CornerRadius="8" Background="#131315" BorderBrush="#232326" BorderThickness="1" Padding="14,12" Margin="0,0,10,10">
- <StackPanel><TextBlock Text="$(Esc $label)" FontSize="11.5" Foreground="#76767D"/><TextBlock Text="$(Esc $value)" FontSize="24" FontWeight="SemiBold" Foreground="$color" Margin="0,4,0,0"/><TextBlock Text="$(Esc $sub)" FontSize="11.5" Foreground="#8E8E95" TextWrapping="Wrap"/></StackPanel>
+ <StackPanel><TextBlock Text="$(Esc $label)" FontSize="11.5" Foreground="#82828A"/><TextBlock Text="$(Esc $value)" FontSize="24" FontWeight="SemiBold" Foreground="$color" Margin="0,4,0,0"/><TextBlock Text="$(Esc $sub)" FontSize="11.5" Foreground="#8E8E95" TextWrapping="Wrap"/></StackPanel>
 </Border>
 "@
 }
@@ -4624,11 +4636,11 @@ function Build-BenchPanel {
    <TextBlock Text="Medición de FPS y latencia" FontSize="12.5" Foreground="#8E8E95"/>
    <TextBlock Text="Mide antes y después de aplicar los ajustes" FontSize="22" FontWeight="SemiBold" Foreground="White" Margin="0,6,0,0"/>
    <TextBlock x:Name="St" FontSize="13" Foreground="#A0A0A7" TextWrapping="Wrap" Margin="0,6,20,0" Text="Elige juego y duración, pulsa Empezar y entra en partida o en el campo de tiro. La medición empieza sola cuando el juego está abierto, con un aviso sonoro al empezar y al terminar."/>
-   <TextBlock Text="JUEGO" FontSize="10.5" FontWeight="SemiBold" Foreground="#76767D" Margin="0,16,0,6"/>
+   <TextBlock Text="JUEGO" FontSize="10.5" FontWeight="SemiBold" Foreground="#82828A" Margin="0,16,0,6"/>
    <WrapPanel x:Name="Games"/>
    <Grid Margin="0,6,0,0"><Grid.ColumnDefinitions><ColumnDefinition Width="Auto"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
-    <StackPanel><TextBlock Text="DURACIÓN" FontSize="10.5" FontWeight="SemiBold" Foreground="#76767D" Margin="0,4,0,6"/><WrapPanel x:Name="Durs"/></StackPanel>
-    <StackPanel Grid.Column="1" Margin="14,0,20,0"><TextBlock Text="NOMBRE DE LA MEDICIÓN" FontSize="10.5" FontWeight="SemiBold" Foreground="#76767D" Margin="0,4,0,6"/>
+    <StackPanel><TextBlock Text="DURACIÓN" FontSize="10.5" FontWeight="SemiBold" Foreground="#82828A" Margin="0,4,0,6"/><WrapPanel x:Name="Durs"/></StackPanel>
+    <StackPanel Grid.Column="1" Margin="14,0,20,0"><TextBlock Text="NOMBRE DE LA MEDICIÓN" FontSize="10.5" FontWeight="SemiBold" Foreground="#82828A" Margin="0,4,0,6"/>
      <Border CornerRadius="6" Background="#161618" BorderBrush="#2A2A2E" BorderThickness="1" Padding="12,0" Height="36" MaxWidth="320" HorizontalAlignment="Left"><TextBox x:Name="Lbl" Background="Transparent" BorderThickness="0" Foreground="#EDEDEF" CaretBrush="White" SelectionBrush="{DynamicResource AccentBrush}" FontSize="13" VerticalAlignment="Center" MinWidth="220"/></Border>
     </StackPanel>
    </Grid>
@@ -4654,7 +4666,7 @@ function Build-BenchPanel {
     $b.Go.Add_Click({ Start-Bench })
     $b.Cancel.Add_Click({ if ($script:BenchSync) { $script:BenchSync.Cancel = $true; $script:Bench.St.Text = 'Cancelando...' } })
     [void]$sp.Children.Add($card)
-    [void]$sp.Children.Add((New-El "<TextBlock {NS} Text=`"Para comparar de forma justa: misma escena (por ejemplo el campo de tiro o un mapa creativo), mismos gráficos, misma duración y nada más abierto. Usa PresentMon, la herramienta de Intel en la que se basan HWiNFO, FrameView u OCCT.`" FontSize=`"12`" Foreground=`"#76767D`" TextWrapping=`"Wrap`" Margin=`"2,0,0,18`"/>"))
+    [void]$sp.Children.Add((New-El "<TextBlock {NS} Text=`"Para comparar de forma justa: misma escena (por ejemplo el campo de tiro o un mapa creativo), mismos gráficos, misma duración y nada más abierto. Usa PresentMon, la herramienta de Intel en la que se basan HWiNFO, FrameView u OCCT.`" FontSize=`"12`" Foreground=`"#82828A`" TextWrapping=`"Wrap`" Margin=`"2,0,0,18`"/>"))
     $b.Res = New-Object Windows.Controls.StackPanel; [void]$sp.Children.Add($b.Res)
     $runs = @(Get-BenchRuns); $pref = if ($runs.Count) { "$($runs[-1].Game)" } else { '' }
     $first = @($b.Games.Children | Where-Object { $_.Tag -eq $pref }) | Select-Object -First 1
@@ -4791,7 +4803,7 @@ function Render-BenchResults {
         [void]$b.Res.Children.Add((New-Header 'HISTORIAL' 16))
         $hist = New-El "<Border {NS} CornerRadius=`"8`" Background=`"#131315`" BorderBrush=`"#232326`" BorderThickness=`"1`" Padding=`"18,10`" Margin=`"0,0,10,0`"><StackPanel x:Name=`"H`"/></Border>"
         $hp = $hist.FindName('H')
-        $hdr = "<Grid {NS} Margin=`"0,4`"><Grid.ColumnDefinitions><ColumnDefinition Width=`"120`"/><ColumnDefinition Width=`"*`"/><ColumnDefinition Width=`"80`"/><ColumnDefinition Width=`"80`"/><ColumnDefinition Width=`"80`"/><ColumnDefinition Width=`"36`"/></Grid.ColumnDefinitions><TextBlock Text=`"Fecha`" FontSize=`"11.5`" Foreground=`"#5F5F66`"/><TextBlock Grid.Column=`"1`" Text=`"Juego · medición`" FontSize=`"11.5`" Foreground=`"#5F5F66`"/><TextBlock Grid.Column=`"2`" Text=`"FPS`" FontSize=`"11.5`" Foreground=`"#5F5F66`" TextAlignment=`"Right`"/><TextBlock Grid.Column=`"3`" Text=`"1 % bajo`" FontSize=`"11.5`" Foreground=`"#5F5F66`" TextAlignment=`"Right`"/><TextBlock Grid.Column=`"4`" Text=`"Latencia`" FontSize=`"11.5`" Foreground=`"#5F5F66`" TextAlignment=`"Right`"/></Grid>"
+        $hdr = "<Grid {NS} Margin=`"0,4`"><Grid.ColumnDefinitions><ColumnDefinition Width=`"120`"/><ColumnDefinition Width=`"*`"/><ColumnDefinition Width=`"80`"/><ColumnDefinition Width=`"80`"/><ColumnDefinition Width=`"80`"/><ColumnDefinition Width=`"36`"/></Grid.ColumnDefinitions><TextBlock Text=`"Fecha`" FontSize=`"11.5`" Foreground=`"#82828A`"/><TextBlock Grid.Column=`"1`" Text=`"Juego · medición`" FontSize=`"11.5`" Foreground=`"#82828A`"/><TextBlock Grid.Column=`"2`" Text=`"FPS`" FontSize=`"11.5`" Foreground=`"#82828A`" TextAlignment=`"Right`"/><TextBlock Grid.Column=`"3`" Text=`"1 % bajo`" FontSize=`"11.5`" Foreground=`"#82828A`" TextAlignment=`"Right`"/><TextBlock Grid.Column=`"4`" Text=`"Latencia`" FontSize=`"11.5`" Foreground=`"#82828A`" TextAlignment=`"Right`"/></Grid>"
         [void]$hp.Children.Add((New-El $hdr))
         foreach ($x in ($all | Sort-Object Date -Descending | Select-Object -First 20)) {
             $lt = if ($null -ne $x.InputLat) { (Format-Num $x.InputLat '0.0') + ' ms' } elseif ($null -ne $x.Latency) { (Format-Num $x.Latency '0.0') + ' ms' } else { '—' }
@@ -4887,7 +4899,7 @@ function Show-BenchCompare($baseId) {
   <TextBlock Text="$(Esc $head)" FontSize="18" FontWeight="SemiBold" Foreground="$hc" TextWrapping="Wrap"/>
   <TextBlock Text="$(Esc $verdict)" FontSize="12.5" Foreground="#8E8E95" Margin="0,4,0,10" TextWrapping="Wrap"/>
   <Grid Margin="0,0,0,2"><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="100"/><ColumnDefinition Width="100"/><ColumnDefinition Width="100"/></Grid.ColumnDefinitions>
-   <TextBlock Text="" /><TextBlock Grid.Column="1" Text="$(Esc $base.Label)" FontSize="11.5" Foreground="#5F5F66" TextAlignment="Right" TextTrimming="CharacterEllipsis"/><TextBlock Grid.Column="2" Text="$(Esc $now.Label)" FontSize="11.5" Foreground="#5F5F66" TextAlignment="Right" TextTrimming="CharacterEllipsis"/><TextBlock Grid.Column="3" Text="Cambio" FontSize="11.5" Foreground="#5F5F66" TextAlignment="Right"/>
+   <TextBlock Text="" /><TextBlock Grid.Column="1" Text="$(Esc $base.Label)" FontSize="11.5" Foreground="#82828A" TextAlignment="Right" TextTrimming="CharacterEllipsis"/><TextBlock Grid.Column="2" Text="$(Esc $now.Label)" FontSize="11.5" Foreground="#82828A" TextAlignment="Right" TextTrimming="CharacterEllipsis"/><TextBlock Grid.Column="3" Text="Cambio" FontSize="11.5" Foreground="#82828A" TextAlignment="Right"/>
   </Grid>
   $rowsX
  </StackPanel>
@@ -4996,7 +5008,7 @@ function Build-ModesPanel {
    <Button x:Name="CloseNow" Grid.Column="1" Style="{DynamicResource Ghost}" Content="Cerrar ahora" VerticalAlignment="Top"/>
   </Grid>
   <WrapPanel x:Name="Apps" Margin="0,14,0,0"/>
-  <TextBlock x:Name="Running" FontSize="12" Foreground="#76767D" TextWrapping="Wrap" Margin="0,6,0,0"/>
+  <TextBlock x:Name="Running" FontSize="12" Foreground="#82828A" TextWrapping="Wrap" Margin="0,6,0,0"/>
  </StackPanel>
 </Border>
 "@
@@ -5021,7 +5033,7 @@ function Build-ModesPanel {
     $dt = $dl.FindName('DlTg'); $dt.IsChecked = [bool](Get-Setting 'pauseDownloads' $true)
     $dt.Add_Click({ param($s, $e) Set-Setting 'pauseDownloads' ([bool]$s.IsChecked); Log "Pausar descargas al jugar: $(if ($s.IsChecked) { 'activado' } else { 'desactivado' })" })
     if (Test-Gamer $prof) { [void]$sp.Children.Add($dl) }
-    [void]$sp.Children.Add((New-El "<TextBlock {NS} Text=`"Medal, el Bluetooth, el Modo Juego de Windows y los ajustes de las demás secciones no cambian con los modos. Tus planes de energía no se modifican: el modo solo elige cuál está activo.`" FontSize=`"12`" Foreground=`"#76767D`" TextWrapping=`"Wrap`" Margin=`"2,14,12,0`"/>"))
+    [void]$sp.Children.Add((New-El "<TextBlock {NS} Text=`"Medal, el Bluetooth, el Modo Juego de Windows y los ajustes de las demás secciones no cambian con los modos. Tus planes de energía no se modifican: el modo solo elige cuál está activo.`" FontSize=`"12`" Foreground=`"#82828A`" TextWrapping=`"Wrap`" Margin=`"2,14,12,0`"/>"))
     return $sp
 }
 function Invoke-ModeUI($id) {
@@ -5084,10 +5096,13 @@ function Get-SectionText($key) {
 }
 
 function New-NavIcon($n) {
-    if ($n.Abbr) { "<Border Width=`"22`" Height=`"22`" CornerRadius=`"4`" Background=`"#1C1C1F`" BorderBrush=`"#2A2A2E`" BorderThickness=`"1`" HorizontalAlignment=`"Left`"><TextBlock Text=`"$($n.Abbr)`" FontSize=`"8`" FontWeight=`"SemiBold`" Foreground=`"#A0A0A7`" HorizontalAlignment=`"Center`" VerticalAlignment=`"Center`"/></Border>" }
+    if ($n.Abbr) {
+        $c = if ("$($n.Color)" -match '^#[0-9A-Fa-f]{6}$') { $n.Color.TrimStart('#') } else { '475569' }
+        "<Border Width=`"22`" Height=`"22`" CornerRadius=`"4`" Background=`"#4D$c`" BorderBrush=`"#8C$c`" BorderThickness=`"1`" HorizontalAlignment=`"Left`"><TextBlock Text=`"$(Esc $n.Abbr)`" FontSize=`"8`" FontWeight=`"Bold`" Foreground=`"#E4E4E7`" HorizontalAlignment=`"Center`" VerticalAlignment=`"Center`"/></Border>"
+    }
     else { "<TextBlock FontFamily=`"Segoe Fluent Icons, Segoe MDL2 Assets`" Text=`"$($n.Glyph)`" FontSize=`"15`" VerticalAlignment=`"Center`" Margin=`"4,0,0,0`"/>" }
 }
-function Add-NavHeader($text, $top = 14) { [void]$UI.NavPanel.Children.Add((New-El "<TextBlock {NS} Text=`"$text`" FontSize=`"11`" FontWeight=`"SemiBold`" Foreground=`"#5F5F66`" Margin=`"12,$top,0,6`"/>")) }
+function Add-NavHeader($text, $top = 14) { [void]$UI.NavPanel.Children.Add((New-El "<TextBlock {NS} Text=`"$text`" FontSize=`"11`" FontWeight=`"SemiBold`" Foreground=`"#82828A`" Margin=`"12,$top,0,6`"/>")) }
 function Add-NavItem($n) {
     $cnt = 0
     if ($n.Key -notin @('resumen', 'registro', 'historial')) {
@@ -5183,7 +5198,7 @@ function Update-Pending {
         } else {
             $t.Card.BorderBrush = Br '#232326'
             if ($t.Applied) { $t.StatusText.Text = $(if ($t.HasBackup) { '✓ Activo' } else { '✓ Ya estaba así' }); $t.StatusText.Foreground = Br '#8E8E95' }
-            else { $t.StatusText.Text = 'Desactivado'; $t.StatusText.Foreground = Br '#5F5F66' }
+            else { $t.StatusText.Text = 'Desactivado'; $t.StatusText.Foreground = Br '#82828A' }
         }
     }
     $script:PendingCount = $n
@@ -5497,8 +5512,8 @@ function Render-SetupStep {
         if ($p.Type -eq 'sobremesa' -and $p.Priority -eq 'rendimiento') { $notes += 'El modo del día a día también usa el plan de alto rendimiento.' }
         $noteX = ($notes | ForEach-Object { "<StackPanel Orientation=`"Horizontal`" Margin=`"0,3`"><TextBlock FontFamily=`"Segoe Fluent Icons, Segoe MDL2 Assets`" Text=`"&#xE73E;`" FontSize=`"11`" Foreground=`"{DynamicResource AccentBrush}`" Width=`"20`" VerticalAlignment=`"Center`"/><TextBlock Text=`"$(Esc $_)`" FontSize=`"12.5`" Foreground=`"#C8C8CD`" TextWrapping=`"Wrap`" MaxWidth=`"580`"/></StackPanel>" }) -join ''
         $noteBlock = ''
-        if ($noteX) { $noteBlock = '<TextBlock Text="Qué cambia" FontSize="12.5" Foreground="#76767D" Margin="0,14,0,6"/>' + $noteX }
-        [void]$h.Children.Add((New-El ('<StackPanel {NS}><TextBlock Text="Tus modos" FontSize="12.5" Foreground="#76767D" Margin="0,0,0,8"/><WrapPanel>' + $chips + '</WrapPanel>' + $noteBlock + '<TextBlock Text="Automático" FontSize="12.5" Foreground="#76767D" Margin="0,18,0,4"/></StackPanel>')))
+        if ($noteX) { $noteBlock = '<TextBlock Text="Qué cambia" FontSize="12.5" Foreground="#82828A" Margin="0,14,0,6"/>' + $noteX }
+        [void]$h.Children.Add((New-El ('<StackPanel {NS}><TextBlock Text="Tus modos" FontSize="12.5" Foreground="#82828A" Margin="0,0,0,8"/><WrapPanel>' + $chips + '</WrapPanel>' + $noteBlock + '<TextBlock Text="Automático" FontSize="12.5" Foreground="#82828A" Margin="0,18,0,4"/></StackPanel>')))
         if ($null -eq $w.AutoBattery) { $w.AutoBattery = $lap -and (($p.Battery -eq 'bateria') -or (Test-AutoMode)) }
         if ($null -eq $w.AutoGame) { $w.AutoGame = (@($p.Uses) -contains 'competitivo') -or (Test-GameWatch) }
         $rec = Get-WizRecommendedMode
@@ -5521,7 +5536,7 @@ function Render-SetupStep {
     $nav = New-El @"
 <Grid {NS} Margin="0,18,0,0"><Grid.ColumnDefinitions><ColumnDefinition Width="Auto"/><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
  <Button x:Name="Back" Style="{DynamicResource Ghost}" Content="$backTxt"/>
- <TextBlock x:Name="Hint" Grid.Column="1" FontSize="12" Foreground="#76767D" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,14,0"/>
+ <TextBlock x:Name="Hint" Grid.Column="1" FontSize="12" Foreground="#82828A" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,14,0"/>
  <Button x:Name="Next" Grid.Column="2" Style="{DynamicResource Primary}" Content="$(if ($last) { 'Guardar y empezar' } else { 'Siguiente' })" Padding="20,10"/>
 </Grid>
 "@
