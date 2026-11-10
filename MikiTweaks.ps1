@@ -1297,7 +1297,8 @@ function Add-NetPlusTweaks($f) {
             $i = 0; $any = $false
             foreach ($it in @($t.Data.Items)) {
                 $b = Get-BackupItem "$($t.Id)#$i"
-                if ($null -ne $b) { try { Set-NetAdapterAdvancedProperty -Name $t.Data.Nic -RegistryKeyword $it.Kw -RegistryValue "$($b.value)" -ErrorAction Stop } catch {}; Clear-BackupItem "$($t.Id)#$i"; $any = $true }
+                # Si falla, la copia se conserva para poder reintentar (antes se borraba y el valor original se perdía)
+                if ($null -ne $b) { try { Set-NetAdapterAdvancedProperty -Name $t.Data.Nic -RegistryKeyword $it.Kw -RegistryValue "$($b.value)" -ErrorAction Stop; Clear-BackupItem "$($t.Id)#$i" } catch { Write-CrashLog $_ "deshacer $($t.Id) ($($it.Kw))" }; $any = $true }
                 $i++
             }
             return $any }
@@ -1985,7 +1986,7 @@ function Resume-Downloads {
     $st = Get-ModeState
     $paused = @(@($st.dlPaused) | Where-Object { $_ })
     if (-not $paused.Count -and -not $st.odPath) { return }
-    foreach ($n in $paused) { try { $sv = Get-Service $n -ErrorAction Stop; if ("$($sv.StartType)" -ne 'Disabled' -and $sv.Status -ne 'Running') { Start-Service $n -ErrorAction Stop } } catch {} }
+    foreach ($n in $paused) { try { $sv = Get-Service $n -ErrorAction Stop; if ("$($sv.StartType)" -ne 'Disabled' -and $sv.Status -ne 'Running') { Start-Service $n -ErrorAction Stop } } catch { Write-ModeLog "· No pude reanudar el servicio $n; Windows lo volverá a arrancar cuando lo necesite" } }
     # OneDrive se vuelve a abrir a través del Explorador para que no se ejecute como administrador
     if ($st.odPath -and (Test-Path $st.odPath) -and -not (Get-Process OneDrive -ErrorAction SilentlyContinue)) { try { Start-Process explorer.exe -ArgumentList "`"$($st.odPath)`"" } catch {} }
     $st.dlPaused = @(); $st.odPath = $null; Save-ModeState $st
@@ -2149,7 +2150,10 @@ function Get-WeeklyStatus {
             $inst = "$(& $smi --query-gpu=driver_version --format=csv,noheader | Select-Object -First 1)".Trim()
             $x = [xml](Invoke-WebRequest 'https://www.nvidia.com/Download/API/lookupValueSearch.aspx?TypeID=3' -UseBasicParsing -TimeoutSec 30).Content
             $name = ("$($gpu.Name)" -replace '^NVIDIA ', '').Trim()
-            $hit = @($x.LookupValueSearch.LookupValues.LookupValue) | Where-Object { $_.Name -eq $name } | Select-Object -First 1
+            # Copia de $DriverCheckWork: esta función tiene que ser autónoma (se serializa al segundo plano y corre con -Check)
+            $all = @($x.LookupValueSearch.LookupValues.LookupValue)
+            $hit = $all | Where-Object { $_.Name -eq $name } | Select-Object -First 1
+            if (-not $hit) { $hit = $all | Where-Object { $_.Name -like "*$name*" } | Select-Object -First 1 }
             if ($hit) {
                 $os = if ([Environment]::OSVersion.Version.Build -ge 22000) { 135 } else { 57 }
                 $j = Invoke-RestMethod "https://gfwsl.geforce.com/services_toolkit/services/com/nvidia/services/AjaxDriverService.php?func=DriverManualLookup&pfid=$($hit.Value)&osID=$os&languageCode=1033&isWHQL=1&dch=1&sort1=0&numberOfResults=1" -TimeoutSec 30
@@ -2387,9 +2391,25 @@ static class MikiTweaksLauncher {
     } finally { Remove-Item $tmp -Recurse -Force -ErrorAction SilentlyContinue }
 }
 
+function Protect-DataDir {
+    # La app y sus tareas se ejecutan como admin y cargan scripts, PresentMon y copias de esta carpeta:
+    # si el usuario normal pudiera escribir aquí, cualquier programa podría conseguir admin sin aviso de UAC
+    $ok = { $a = Get-Acl $DataDir; $a.AreAccessRulesProtected -and $a.GetOwner([Security.Principal.SecurityIdentifier]).Value -eq 'S-1-5-32-544' }
+    if (& $ok) { return }
+    # El dueño también pasa a Administradores: el dueño puede cambiar los permisos aunque no tenga escritura
+    & icacls.exe $DataDir /setowner '*S-1-5-32-544' /T /C /Q | Out-Null
+    # Solo en la raíz (con /T los archivos se quedarían sin permisos) y luego todo lo de dentro hereda de ella
+    & icacls.exe $DataDir /inheritance:r /grant:r '*S-1-5-32-544:(OI)(CI)F' '*S-1-5-18:(OI)(CI)F' '*S-1-5-32-545:(OI)(CI)RX' /Q | Out-Null
+    & icacls.exe (Join-Path $DataDir '*') /reset /T /C /Q | Out-Null
+    if (-not (& $ok)) { throw 'icacls no pudo proteger la carpeta de datos' }   # icacls con /C devuelve 0 aunque falle
+}
+
 function Install-App {
     try {
         New-Item -ItemType Directory -Force -Path $AppDir | Out-Null
+        if (([Security.Principal.WindowsPrincipal]$me).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {
+            try { Protect-DataDir } catch { Write-CrashLog $_ 'proteger la carpeta de datos' }
+        }
         if ($PSCommandPath -and ($PSCommandPath -ne $AppPath)) {
             $same = (Test-Path $AppPath) -and ((Get-FileHash $AppPath).Hash -eq (Get-FileHash $PSCommandPath).Hash)
             if (-not $same) { Copy-Item $PSCommandPath $AppPath -Force; Unblock-File $AppPath -ErrorAction SilentlyContinue }

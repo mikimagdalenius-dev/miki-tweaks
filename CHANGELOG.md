@@ -2,6 +2,9 @@
 
 ## 8.3
 - **Ajustes avanzados con pruebas** para Windows 10 y 11 (solo aparecen si hacen falta): temporizadores de arranque en automático, modo MSI de la gráfica, sin Fault Tolerant Heap, el juego no baja de volumen en las llamadas, sin inicio rápido, Windows Update no cambia tus drivers, sin transparencias y sin marca de último acceso.
+- **Seguridad:** la carpeta de la app solo la pueden modificar los administradores, así ningún programa puede usarla para conseguir permisos de admin sin el aviso de Windows.
+- Al deshacer un ajuste de la tarjeta de red, si falla, ya no se pierde la copia del valor original y queda anotado en el informe de errores.
+- El aviso semanal encuentra el driver de más modelos de gráfica NVIDIA (sobre todo de portátil).
 
 ## 8.2 · noviembre de 2026
 - La app en **inglés y español**: detecta el idioma de Windows y tiene selector en Ajustes.
