@@ -53,6 +53,20 @@ Describe 'Interfaz' {
     }
 }
 
+Describe 'Versión de Windows' {
+    # Dentro de MikiTweaks.exe, [Environment]::OSVersion devuelve 9200 (Windows 8) si el manifiesto no declara Windows 10/11:
+    # la app se creía en Windows 10 estando en Windows 11 (8.5 y anteriores)
+    It 'el lanzador declara compatibilidad con Windows 10/11' {
+        (Get-Content $script:Src -Raw) | Should -Match 'supportedOS Id="\{8e0f7a12-bfb3-4fe8-b9a5-48fd50a15a9a\}"'
+    }
+    It 'la compilación se lee del registro, no de OSVersion' {
+        $line = (Get-Content $script:Src -Encoding UTF8) | Where-Object { $_ -match '^\s*\$f\.WinBuild\s*=' } | Select-Object -First 1
+        $line | Should -Match 'CurrentBuildNumber'
+        $f = @{}; . ([scriptblock]::Create(($line -replace '\s+#.*$', '')))
+        $f.WinBuild | Should -Be ([int](Get-ItemProperty 'HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion').CurrentBuildNumber)
+    }
+}
+
 Describe 'Canal de actualizaciones (version.json)' {
     # Si esto falla, las copias instaladas rechazarían la actualización o recibirían otra versión
     BeforeAll { $script:Manifest = Get-Content (Join-Path $PSScriptRoot '..\version.json') -Raw | ConvertFrom-Json }
