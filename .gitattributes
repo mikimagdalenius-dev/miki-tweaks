@@ -1,0 +1,3 @@
+# Se suben tal cual: la huella de version.json tiene que coincidir byte a byte y el .cmd necesita CRLF
+*.ps1 -text
+*.cmd -text
