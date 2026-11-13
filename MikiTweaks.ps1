@@ -110,7 +110,7 @@ function Clear-BackupItem($key) { if ($script:Backup.ContainsKey($key)) { $scrip
 function Test-HasBackup($id) { foreach ($k in @($script:Backup.Keys)) { if ($k -eq $id -or $k -like "$id#*") { return $true } }; return $false }
 
 # ======================= Ajustes de la app =======================
-$AppVersion   = '8.5.3'
+$AppVersion   = '9.0'
 
 # ======================= Protección contra errores =======================
 # Si algo falla en un PC concreto, la app no se cierra: guarda el detalle y sigue con lo demás.
