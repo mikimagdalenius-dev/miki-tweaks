@@ -1,5 +1,10 @@
 # Cambios
 
+## 9.0
+- **Nuevo diseño, más fácil de usar.** El menú pasa de ~20 entradas a 5: Inicio, Juegos, Windows, Herramientas y Ajustes. Cada una agrupa sus secciones en pestañas. No se ha quitado nada: todo sigue en su sitio, solo mejor ordenado.
+- **Inicio guiado:** un botón grande «Optimizar ahora» aplica los ajustes recomendados, y debajo salen hasta 3 **siguientes pasos** según tu PC (driver nuevo, actualizaciones de Windows, espacio para liberar, medir tus FPS o elegir un modo).
+- Aspecto renovado: más aire, esquinas más suaves, menos bordes, títulos más grandes y cabeceras más fáciles de leer.
+
 ## 8.5.3
 - **Corregido:** el Modo Juego dejaba Windows Update en pausa mientras siguieras en ese modo, a veces semanas. Ahora las descargas solo se pausan con un juego abierto y vuelven unos segundos después de cerrarlo. Al abrir la app, si se habían quedado en pausa sin ningún juego abierto, se reanudan.
 - Deshacer los ajustes de arranque (bcdedit), la hibernación y las tareas de telemetría ya no borra la copia del valor original si Windows no deja restaurarlo: avisa y se puede reintentar.

@@ -46,11 +46,11 @@ function Snap($name) {
 if ($CapKeys -contains 'inicio') { Snap 'inicio' }
 $script:StepRows = New-Object System.Collections.Generic.List[object]
 Finish-Scan; $script:ScoreTimer.Stop(); $script:ScoreCur = Get-Score; Set-Gauge $script:ScoreCur
-if ($CapListKeys) { Write-Output ("Secciones: " + (@($script:NavButtons.Keys) -join ', ')) }
+if ($CapListKeys) { Write-Output ("Secciones: " + (@($script:TabGroup.Keys) -join ', ')) }
 foreach ($k in $CapKeys) {
     if ($k -eq 'inicio') { continue }
     $nav, $file = $k -split '=', 2; if (-not $file) { $file = $nav }
-    if ($script:NavButtons.ContainsKey($nav)) { Select-Nav $nav; if ($CapEnd) { DoEvents; $UI.MainScroll.ScrollToEnd(); DoEvents }; Snap $file } else { Write-Output "  (no existe la sección $nav)" }
+    if ($script:TabGroup.ContainsKey($nav)) { Select-Nav $nav; if ($CapEnd) { DoEvents; $UI.MainScroll.ScrollToEnd(); DoEvents }; Snap $file } else { Write-Output "  (no existe la sección $nav)" }
 }
 Stop-Monitor; $window.Close()
 Write-Output "Puntuación: $(Get-Score) · lateral: $($UI.SideScore.Text) · idioma: $script:Lang"
