@@ -1,5 +1,15 @@
 # Cambios
 
+## 9.1
+Ajustes nuevos, sacados de comparar con WinUtil y Win11Debloat y de vídeos que miden cada ajuste con benchmarks:
+- **Caché de sombreadores de NVIDIA a 10 GB:** si la caché se llena, el driver borra sombreadores y el juego vuelve a dar tirones en zonas por las que ya pasaste.
+- **Apagar VBS del todo:** desde Windows 11 24H2, quitar la Integridad de memoria no apaga VBS, que es lo que de verdad cuesta FPS. Si VBS sigue en marcha, la app lo detecta y te lo ofrece.
+- **«Finalizar tarea» con clic derecho** en la barra de tareas, para cerrar un juego congelado al momento.
+- **Sin programas que se instalan solos** al conectar un ratón, unos cascos o un monitor (Razer, Logitech...).
+- **Sin Copilot, Click to Do ni anuncios de Microsoft 365** en Configuración.
+- **Explorador más rápido y con extensiones visibles.**
+- **Modo MSI:** ya no se propone si la gráfica ya lo usa. Las RTX 30 o posteriores, las RX 6000 o posteriores y los drivers recientes lo activan solos, aunque el registro no lo diga.
+
 ## 9.0.1
 - **Corregido:** al activar el Modo Juego, el PC podía suspenderse a los 10 minutos sin tocarlo. El plan «Máximo rendimiento» trae de fábrica apagar la pantalla a los 10 min, y en los portátiles con espera moderna eso suspende el equipo. Ahora, al cambiar de modo, el plan nuevo recibe tus propios tiempos de pantalla y suspensión.
 
