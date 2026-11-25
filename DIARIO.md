@@ -31,9 +31,9 @@ Los cambios de cada versión, para los usuarios, están en `CHANGELOG.md`.
 
 Antes de publicar, probar abriendo `github\Abrir Miki Tweaks.cmd`. No hacer push del script sin publicar versión: la huella de `version.json` fallaría.
 
-## Estado (13/11/2026)
+## Estado (25/11/2026)
 
-- **Versión 9.0 publicada:** menú de 5 entradas con pestañas, inicio guiado y estilo renovado. A Miki le gusta más así.
+- **Versión 9.0.1 publicada** (arregla la suspensión a los 10 min). **9.0:** menú de 5 entradas con pestañas, inicio guiado y estilo renovado. A Miki le gusta más así.
 - **Lo próximo:** Miki pasará la app a 5-10 amigos. Hasta tener sus comentarios, no añadir funciones nuevas.
 - **Sin probar en uso real:**
   - ventanas emergentes;
@@ -74,3 +74,6 @@ Antes de publicar, probar abriendo `github\Abrir Miki Tweaks.cmd`. No hacer push
 
 ### 13/11/2026
 - **9.0:** rediseño con menú de 5 entradas y pestañas, inicio guiado ("Optimizar ahora" y siguientes pasos) y estilo renovado.
+
+### 25/11/2026
+- **9.0.1:** Miki notó que el PC se suspendía a los 10 min. Causa: el Modo Juego activa «Máximo rendimiento», que trae 10 min de pantalla, y con espera moderna (S0) apagar la pantalla suspende el portátil. Ahora, al cambiar de modo, el plan nuevo copia los tiempos de pantalla y suspensión del plan actual (`Copy-PlanTimeouts`). Probado que powercfg deja escribirlos sin admin.
