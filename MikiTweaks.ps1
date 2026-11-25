@@ -110,7 +110,7 @@ function Clear-BackupItem($key) { if ($script:Backup.ContainsKey($key)) { $scrip
 function Test-HasBackup($id) { foreach ($k in @($script:Backup.Keys)) { if ($k -eq $id -or $k -like "$id#*") { return $true } }; return $false }
 
 # ======================= Ajustes de la app =======================
-$AppVersion   = '9.0'
+$AppVersion   = '9.0.1'
 
 # ======================= Protección contra errores =======================
 # Si algo falla en un PC concreto, la app no se cierra: guarda el detalle y sigue con lo demás.
@@ -1968,6 +1968,18 @@ function Get-GamePlan([switch]$Create) {
     if ($g) { $s.gamePlan = $g; Save-ModeState $s }
     return $g
 }
+# El plan de destino recibe los tiempos de pantalla y suspensión del plan actual: «Máximo rendimiento» trae 10 min de pantalla
+# y, con espera moderna, apagar la pantalla suspende el PC
+function Copy-PlanTimeouts($to) {
+    foreach ($s in @('SUB_VIDEO VIDEOIDLE', 'SUB_SLEEP STANDBYIDLE')) {
+        $sub, $set = $s -split ' '
+        # Las dos últimas cifras 0x de la consulta son los valores actuales con corriente y con batería (sin depender del idioma)
+        $v = @([regex]::Matches(((powercfg /query SCHEME_CURRENT $sub $set) -join "`n"), '0x([0-9a-f]{8})') | ForEach-Object { [Convert]::ToUInt32($_.Groups[1].Value, 16) })
+        if ($v.Count -lt 2) { continue }
+        powercfg /setacvalueindex $to $sub $set $v[-2] | Out-Null
+        powercfg /setdcvalueindex $to $sub $set $v[-1] | Out-Null
+    }
+}
 function Get-InternalDisplay { try { return [CtNative]::FindDisplay('Intel|AMD Radeon\(TM\)|Radeon Graphics') } catch { return $null } }
 function Test-OnAC { $b = Get-CimInstance Win32_Battery -ErrorAction SilentlyContinue | Select-Object -First 1; return (-not $b) -or ($b.BatteryStatus -ne 1) }
 
@@ -2036,9 +2048,9 @@ function Resume-Downloads {
 function Invoke-Mode($id) {
     $m = $ModeDefs[$id]
     Write-ModeLog "Activando $($m.Name)..."
-    # Plan de energía (solo se elige cuál está activo; ninguno se modifica)
+    # Plan de energía: se elige cuál está activo y solo se le copian tus tiempos de pantalla y suspensión
     $guid = if ($m.Plan -eq 'game') { Get-GamePlan -Create } else { $BalancedPlan }
-    if ($guid) { powercfg /setactive $guid | Out-Null; Write-ModeLog "✓ Plan de energía: $(Get-PlanName $guid)" }
+    if ($guid) { try { Copy-PlanTimeouts $guid } catch {}; powercfg /setactive $guid | Out-Null; Write-ModeLog "✓ Plan de energía: $(Get-PlanName $guid)" }
     else { Write-ModeLog '· No encontré tu plan de alto rendimiento; el plan se deja como está' }
     if ($m.Overlay) {
         try { [void][CtNative]::SetOverlay($OverlayGuids[$m.Overlay]); Write-ModeLog "✓ Perfil de energía: $(if ($m.Overlay -eq 'efficiency') { 'máxima eficiencia' } else { 'equilibrado' })" }

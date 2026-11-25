@@ -1,5 +1,8 @@
 # Cambios
 
+## 9.0.1
+- **Corregido:** al activar el Modo Juego, el PC podía suspenderse a los 10 minutos sin tocarlo. El plan «Máximo rendimiento» trae de fábrica apagar la pantalla a los 10 min, y en los portátiles con espera moderna eso suspende el equipo. Ahora, al cambiar de modo, el plan nuevo recibe tus propios tiempos de pantalla y suspensión.
+
 ## 9.0
 - **Nuevo diseño, más fácil de usar.** El menú pasa de ~20 entradas a 5: Inicio, Juegos, Windows, Herramientas y Ajustes. Cada una agrupa sus secciones en pestañas. No se ha quitado nada: todo sigue en su sitio, solo mejor ordenado.
 - **Inicio guiado:** un botón grande «Optimizar ahora» aplica los ajustes recomendados, y debajo salen hasta 3 **siguientes pasos** según tu PC (driver nuevo, actualizaciones de Windows, espacio para liberar, medir tus FPS o elegir un modo).
