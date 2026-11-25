@@ -33,7 +33,7 @@ Antes de publicar, probar abriendo `github\Abrir Miki Tweaks.cmd`. No hacer push
 
 ## Estado (25/11/2026)
 
-- **Versión 9.0.1 publicada** (arregla la suspensión a los 10 min). **9.0:** menú de 5 entradas con pestañas, inicio guiado y estilo renovado. A Miki le gusta más así.
+- **Versión 9.1 publicada:** 6 ajustes nuevos sacados de estudiar vídeos y otras apps. **9.0.1:** arregla la suspensión a los 10 min. **9.0:** menú de 5 entradas con pestañas, inicio guiado y estilo renovado. A Miki le gusta más así.
 - **Lo próximo:** Miki pasará la app a 5-10 amigos. Hasta tener sus comentarios, no añadir funciones nuevas.
 - **Sin probar en uso real:**
   - ventanas emergentes;
@@ -77,3 +77,12 @@ Antes de publicar, probar abriendo `github\Abrir Miki Tweaks.cmd`. No hacer push
 
 ### 25/11/2026
 - **9.0.1:** Miki notó que el PC se suspendía a los 10 min. Causa: el Modo Juego activa «Máximo rendimiento», que trae 10 min de pantalla, y con espera moderna (S0) apagar la pantalla suspende el portátil. Ahora, al cambiar de modo, el plan nuevo copia los tiempos de pantalla y suspensión del plan actual (`Copy-PlanTimeouts`). Probado que powercfg deja escribirlos sin admin.
+- **9.1:** Miki pidió estudiar vídeos y otras apps. Se estudiaron 14 vídeos (subtítulos) y los ajustes de WinUtil y Win11Debloat; el resumen está en la wiki, en `Aprendizajes/Windows - optimizar para juegos (qué funciona y qué es mito).md`. Miki eligió 6 cosas y se hicieron:
+  - caché de sombreadores de NVIDIA a 10 GB (perfil global, `CtNvDrs::Global`);
+  - «Apagar VBS del todo» (`win_vbs`), que sale si la Integridad de memoria está quitada pero VBS sigue en marcha, como en el PC de Miki;
+  - «Finalizar tarea» en la barra de tareas;
+  - sin apps de fabricantes al conectar dispositivos;
+  - sin Copilot, Click to Do ni anuncios de M365;
+  - Explorador sin adivinar el tipo de carpeta y con extensiones visibles;
+  - el Modo MSI ya no se propone si la gráfica ya usa MSI (IRQ por encima de 2^31).
+  Tests: 33/33. GitHub dio error 500 en el push (al reintentar entró) y en la release (se reintenta sola).
